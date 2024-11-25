@@ -2,7 +2,7 @@
   "title": "Флорсем Ліцензія",
   "loginScreen" : {
     "loginButton" : "Увійти",
-    "emailLabel" : "E-мейл",
+    "emailLabel" : "Логін",
     "passwordLabel" : "Пароль"
   },
   "homeScreen" : {

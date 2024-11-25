@@ -2,7 +2,7 @@
   "title": "Florsem License",
   "loginScreen" : {
     "loginButton" : "Login",
-    "emailLabel" : "Email",
+    "emailLabel" : "Login",
     "passwordLabel" : "Password"
   },
   "homeScreen" : {

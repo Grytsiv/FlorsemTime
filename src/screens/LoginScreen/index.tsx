@@ -51,7 +51,7 @@ const LoginScreen: FC = () => {
                 value={passwordInput}
                 onChangeText={onChangePassword}
                 mode="outlined"
-                autoCapitalize="characters"
+                autoCapitalize="none"
                 autoCorrect={false}
                 returnKeyType="done"
                 maxLength={40}
