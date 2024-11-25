@@ -1,0 +1,15 @@
+{
+  "title": "Florsem License",
+  "loginScreen" : {
+    "loginButton" : "Login",
+    "emailLabel" : "Email",
+    "passwordLabel" : "Password"
+  },
+  "homeScreen" : {
+    "title" : "Home",
+    "label" : "Home screen will be here soon",
+    "arrivalDate" : "License date",
+    "logoutButton" : "Logout",
+    "refreshTokenButton" : "Refresh Token"
+  }
+}

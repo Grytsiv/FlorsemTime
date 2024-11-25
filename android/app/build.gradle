@@ -1,7 +1,8 @@
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
-
+//react-native-vector-icons, https://github.com/oblador/react-native-vector-icons#android
+apply from: file("../../node_modules/react-native-vector-icons/fonts.gradle")
 /**
  * This is the configuration block to customize your React Native Android app.
  * By default you don't need to apply any configuration, just uncomment the lines you need.
@@ -77,9 +78,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.florsemtime"
+    namespace "com.agcompany.florsem_license"
     defaultConfig {
-        applicationId "com.florsemtime"
+        applicationId "com.agcompany.florsem_license"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -110,6 +111,15 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
+
+    //Flipper
+    debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
+      exclude group:'com.facebook.fbjni'
+    }
+    debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
+      exclude group:'com.facebook.flipper'
+    }
+    implementation "org.jetbrains.kotlin:kotlin-reflect:1.9.22"
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")

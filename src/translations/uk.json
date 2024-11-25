@@ -1,0 +1,15 @@
+{
+  "title": "Флорсем Ліцензія",
+  "loginScreen" : {
+    "loginButton" : "Увійти",
+    "emailLabel" : "E-мейл",
+    "passwordLabel" : "Пароль"
+  },
+  "homeScreen" : {
+    "title": "Початковий",
+    "label" : "Початковий екран скоро тут буде",
+    "arrivalDate" : "License date",
+    "logoutButton" : "Вийти",
+    "refreshTokenButton" : "Оновити Токен"
+  }
+}
