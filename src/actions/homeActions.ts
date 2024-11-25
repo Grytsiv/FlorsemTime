@@ -1,4 +1,7 @@
-import {GET_USERS_ME_REQUEST} from './types';
-export const handleUserInfo = () => ({
-    type: GET_USERS_ME_REQUEST,
+import {RENEW_LICENSE_REQUEST} from './types';
+import {ICreateLicenseModel} from '../models/ICreateLicenseModel.ts';
+
+export const handleRenewLicense = (license: ICreateLicenseModel) => ({
+    type: RENEW_LICENSE_REQUEST,
+    payload: {license},
 });

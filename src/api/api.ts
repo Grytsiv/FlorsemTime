@@ -3,10 +3,12 @@ import {
     SERVER_URL,
     LOGIN_API,
     LOGOUT_API,
+    LICENSE_API,
     DEFAULT_TIME_OUT,
 } from '../config';
 import {getTokenFromKeychain} from '../utils/keychainStorage';
 import {KEYCHAIN_TOKEN_KEY} from '../models/keychainStorage';
+import {ICreateLicenseModel} from '../models/ICreateLicenseModel.ts';
 
 const createApiInstance = (baseURL: string) => {
 
@@ -76,6 +78,12 @@ const createApiInstance = (baseURL: string) => {
 
     return instance;
 };
+
 const loginApi = createApiInstance(SERVER_URL + LOGIN_API);
 const logoutApi = createApiInstance(SERVER_URL + LOGOUT_API);
-export {loginApi, logoutApi};
+const licenseApi = createApiInstance(SERVER_URL + LICENSE_API);
+const createLicenceApi = (license: ICreateLicenseModel) => {
+    return licenseApi.post('', {...license});
+};
+
+export {loginApi, logoutApi, createLicenceApi};

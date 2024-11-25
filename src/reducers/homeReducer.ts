@@ -5,14 +5,15 @@ import {
     SHOW_HOME_ERROR,
     HIDE_HOME_ERROR,
 } from '../actions/types';
+import moment from 'moment/moment';
 interface IHomeReducerState {
-    arrivalDate: Date;
+    licenseDate: Date;
     data: any
     error: any
     isShownErrorAlert: boolean
 }
 const initialState: IHomeReducerState = {
-    arrivalDate: new Date(),
+    licenseDate: new Date(moment(new Date()).add(1, 'month').toDate()),
     data: {},
     error: {},
     isShownErrorAlert: false,

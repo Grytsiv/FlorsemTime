@@ -12,3 +12,4 @@ export const PRODUCTION_SERVER_URL: string = 'http://localhost:4000';
 export const SERVER_URL: string = STAGING_SERVER_URL;
 export const LOGIN_API: string = '/api/users/login';
 export const LOGOUT_API: string = '/api/users/logout';
+export const LICENSE_API: string = '/api/payments/createlicence';

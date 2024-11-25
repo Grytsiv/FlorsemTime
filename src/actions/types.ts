@@ -26,3 +26,6 @@ export const LOGOUT_USER: string = 'LOGOUT_USER';
 //HOME
 export const SHOW_HOME_ERROR: string = 'SHOW_HOME_ERROR';
 export const HIDE_HOME_ERROR: string = 'HIDE_HOME_ERROR';
+export const RENEW_LICENSE_REQUEST: string = 'RENEW_LICENSE_REQUEST';
+export const RENEW_LICENSE_SUCCESS: string = 'RENEW_LICENSE_SUCCESS';
+export const RENEW_LICENSE_FAILURE: string = 'RENEW_LICENSE_FAILURE';

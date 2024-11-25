@@ -10,6 +10,7 @@
     "label" : "Початковий екран скоро тут буде",
     "arrivalDate" : "License date",
     "logoutButton" : "Вийти",
+    "renewLicenseText" : "Продовжити ліцензію на {{days}} днів",
     "refreshTokenButton" : "Оновити Токен"
   }
 }

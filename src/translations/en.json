@@ -10,6 +10,7 @@
     "label" : "Home screen will be here soon",
     "arrivalDate" : "License date",
     "logoutButton" : "Logout",
+    "renewLicenseText" : "Renew license for {{days}} days",
     "refreshTokenButton" : "Refresh Token"
   }
 }

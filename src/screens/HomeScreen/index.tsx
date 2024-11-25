@@ -5,6 +5,7 @@ import {DatePickerInput} from 'react-native-paper-dates';
 import {useTranslation} from 'react-i18next';
 import moment from 'moment';
 import {TRootState} from '../../boot/configureStore.ts';
+import {CreateLicenseModel} from '../../models/ICreateLicenseModel.ts';
 import {useAppDispatch, useAppSelector} from '../../boot/hooks';
 import ActionCreators from '../../actions';
 import styles from './styles';
@@ -12,12 +13,15 @@ import styles from './styles';
 const HomeScreen: FC = () => {
     const dispatch = useAppDispatch();
     const {t} = useTranslation();
-    const {arrivalDate} = useAppSelector((state: TRootState) => state.homeReducer);
+    const {licenseDate} = useAppSelector((state: TRootState) => state.homeReducer);
 
-    const [arrivalDateInput, setArrivalDate] = React.useState(arrivalDate);
-    const onChangeArrivalDate = React.useCallback(
+    const [licenseDateInput, setLicenseDate] = React.useState<Date>(licenseDate);
+    const onChangeLicenseDate = React.useCallback(
         (date: React.SetStateAction<Date | undefined>) => {
-            setArrivalDate(date);
+            if (date !== undefined) {
+                // @ts-ignore
+                setLicenseDate(date);
+            }
         },
         [],
     );
@@ -26,6 +30,7 @@ const HomeScreen: FC = () => {
     }, [dispatch]);
 
     const now = new Date();
+    const days = Math.floor(moment.duration(licenseDateInput.valueOf() - now.valueOf()).asDays());
     const startDate = new Date(moment(now).toDate()); //today
     const endDate = new Date(moment(now).add(1, 'year').toDate()); //+ 1 year
 
@@ -36,8 +41,8 @@ const HomeScreen: FC = () => {
                 style={styles.dateInput}
                 locale="en"
                 label={t('homeScreen.arrivalDate')}
-                value={arrivalDateInput}
-                onChange={onChangeArrivalDate}
+                value={licenseDateInput}
+                onChange={onChangeLicenseDate}
                 inputMode="start"
                 mode="outlined"
                 startYear={startDate.getFullYear()}
@@ -47,6 +52,16 @@ const HomeScreen: FC = () => {
                     endDate,
                 }}
             />
+            <Button
+                icon="license"
+                mode="outlined"
+                onPress={() => {
+                    const newLicense = new CreateLicenseModel(days);
+                    console.log(newLicense);
+                    dispatch(ActionCreators.handleRenewLicense(newLicense));
+                }}>
+                {t('homeScreen.renewLicenseText', {days: days.toString()})}
+            </Button>
             <Button
                 icon="logout"
                 mode="outlined"
