@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react';
 import {Animated, StatusBar} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
+import {createDrawerNavigator} from '@react-navigation/drawer';
 import LoginScreen from '../screens/LoginScreen';
 import HomeScreen from '../screens/HomeScreen';
 import {navigationRef} from './NavigationService';
@@ -8,15 +9,17 @@ import {NavigationContainer, Theme} from '@react-navigation/native';
 import * as Keychain from 'react-native-keychain';
 import {useAppDispatch, useAppSelector} from '../boot/hooks';
 import ActionCreators from '../actions';
-import {RefreshResult} from 'react-native-app-auth';
 import {TRootState} from '../boot/configureStore';
 import {useTranslation} from 'react-i18next';
+import DrawerIcon from '../components/DrawerIcon';
+import DrawerMenu from '../components/DrawerMenu';
 const Stack = createStackNavigator();
 const AuthStack = createStackNavigator();
-const LoggedInStack = createStackNavigator();
+
 interface IProps {
     theme: Theme;
 }
+
 const AuthNavigator = () => {
     const isRegisteredState = useAppSelector(
         (state: TRootState) => state.appServiceReducer.isRegistered,
@@ -33,26 +36,26 @@ const AuthNavigator = () => {
                     headerShown: false,
                 }}
             />
-            {/*<Stack.Screen*/}
-            {/*  name="ForgotPassword"*/}
-            {/*  component={ForgotPassword}*/}
-            {/*  options={{*/}
-            {/*    // When logging out, a pop animation feels intuitive*/}
-            {/*    // You can remove this if you want the default 'push' animation*/}
-            {/*    animationTypeForReplace: isRegisteredState ? 'push' : 'pop',*/}
-            {/*  }}*/}
-            {/*/>*/}
         </AuthStack.Navigator>
     );
 };
+
+const LoggedInDrawer = createDrawerNavigator();
+
 const LoggedInNavigator = () => {
     const {t} = useTranslation();
     return (
-        <LoggedInStack.Navigator>
-            <Stack.Screen name={t('homeScreen.title')} component={HomeScreen} />
-        </LoggedInStack.Navigator>
+        <LoggedInDrawer.Navigator
+            screenOptions={{
+                headerShown: true,
+                headerLeft: () => <DrawerIcon />,
+            }}
+            drawerContent={props => <DrawerMenu {...props} />}>
+            <LoggedInDrawer.Screen name={t('homeScreen.title')} component={HomeScreen} />
+        </LoggedInDrawer.Navigator>
     );
 };
+
 const NavigationCustomContainer: React.FC<IProps> = (props: IProps) => {
     const {theme} = props;
     const dispatch = useAppDispatch();
@@ -66,16 +69,14 @@ const NavigationCustomContainer: React.FC<IProps> = (props: IProps) => {
                     // Retrieve the credentials
                     const credentials = await Keychain.getGenericPassword();
                     if (credentials) {
-                        const parsedValues: RefreshResult = JSON.parse(
+                        const parsedValues = JSON.parse(
                             credentials.password,
                         );
                         dispatch(
                             ActionCreators.userAlreadyAuthorized({
                                 accessToken: parsedValues.accessToken,
-                                accessTokenExpirationDate: credentials.username,
-                                idToken: parsedValues.idToken,
+                                login: credentials.username,
                                 refreshToken: parsedValues.refreshToken,
-                                tokenType: parsedValues.tokenType,
                             }),
                         );
                     } else {
@@ -118,4 +119,5 @@ const NavigationCustomContainer: React.FC<IProps> = (props: IProps) => {
         </NavigationContainer>
     );
 };
+
 export default NavigationCustomContainer;

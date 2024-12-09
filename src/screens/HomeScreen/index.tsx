@@ -1,4 +1,4 @@
-import React, {FC, useEffect} from 'react';
+import React from 'react';
 import {View} from 'react-native';
 import {Text, Button} from 'react-native-paper';
 import {DatePickerInput} from 'react-native-paper-dates';
@@ -10,10 +10,15 @@ import {useAppDispatch, useAppSelector} from '../../boot/hooks';
 import ActionCreators from '../../actions';
 import styles from './styles';
 
-const HomeScreen: FC = () => {
+const HomeScreen: React.FC = () => {
     const dispatch = useAppDispatch();
     const {t} = useTranslation();
-    const {licenseDate} = useAppSelector((state: TRootState) => state.homeReducer);
+
+    React.useEffect(() => {
+        dispatch(ActionCreators.handleLastPayment());
+    }, [dispatch]);
+
+    const {licenseDate, lastPayment} = useAppSelector((state: TRootState) => state.homeReducer);
 
     const [licenseDateInput, setLicenseDate] = React.useState<Date>(licenseDate);
     const onChangeLicenseDate = React.useCallback(
@@ -25,18 +30,21 @@ const HomeScreen: FC = () => {
         },
         [],
     );
-    useEffect(() => {
-        dispatch(ActionCreators.handleRefresh());
-    }, [dispatch]);
 
     const now = new Date();
     const days = Math.floor(moment.duration(licenseDateInput.valueOf() - now.valueOf()).asDays());
     const startDate = new Date(moment(now).toDate()); //today
     const endDate = new Date(moment(now).add(1, 'year').toDate()); //+ 1 year
+    const validDate = new Date(moment(lastPayment.StartDate).add(lastPayment.Period, 'days').toDate());
+    const validDays = Math.floor(moment.duration(validDate.valueOf() - now.valueOf()).asDays());
+    const validTo = moment.utc(validDate).format('YYYY-MM-DD');
 
     return (
         <View style={styles.container}>
-            <Text>{t('homeScreen.label')}</Text>
+            <Text style={styles.firstTextLine}>{t('homeScreen.licenseValid', {validDays, validTo})}</Text>
+            <Text style={styles.textLine}>{t('homeScreen.cardNumber', {cardNumber:lastPayment.CardNumber})}</Text>
+            <Text style={styles.textLine}>{t('homeScreen.cardOwner', {cardOwner:lastPayment.CardOwnerName})}</Text>
+            <Text style={styles.textLine}>{t('homeScreen.lastPaymentId', {lastPaymentId:lastPayment.Id})}</Text>
             <DatePickerInput
                 style={styles.dateInput}
                 locale="en"
@@ -53,6 +61,7 @@ const HomeScreen: FC = () => {
                 }}
             />
             <Button
+                style={styles.button}
                 icon="license"
                 mode="outlined"
                 onPress={() => {
@@ -63,12 +72,7 @@ const HomeScreen: FC = () => {
                 {t('homeScreen.renewLicenseText', {days: days.toString()})}
             </Button>
             <Button
-                icon="logout"
-                mode="outlined"
-                onPress={() => dispatch(ActionCreators.handleRevoke())}>
-                {t('homeScreen.logoutButton')}
-            </Button>
-            <Button
+                style={styles.bottomButton}
                 mode="outlined"
                 onPress={() => dispatch(ActionCreators.handleRefresh())}>
                 {t('homeScreen.refreshTokenButton')}

@@ -4,11 +4,12 @@ import {
     USER_ALREADY_AUTHORIZED,
     REFRESH_TOKEN_SUCCESS,
 } from '../actions/types';
-interface IAuthenticationReducerState {
+
+export interface IAuthenticationState {
     accessToken: string;
     refreshToken: string;
 }
-const initialState: IAuthenticationReducerState = {
+const initialState: IAuthenticationState = {
     accessToken: '',
     refreshToken: '',
 };

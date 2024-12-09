@@ -10,7 +10,7 @@ import {
     APP_STATE_CHANGED,
 } from '../actions/types';
 import {NetInfoStateType} from '@react-native-community/netinfo';
-interface IAppServiceState {
+export interface IAppServiceState {
     isBusy: boolean;
     isRegistered: undefined | boolean;
     appState: 'none' | 'active' | 'background' | 'inactive';
@@ -35,49 +35,49 @@ const initialState: IAppServiceState = {
 const appServiceReducer = createReducer(
     {...initialState},
     {
-        [SHOW_LOADING_INDICATOR](state: any) {
+        [SHOW_LOADING_INDICATOR](state: IAppServiceState) {
             return {
                 ...state,
                 isBusy: true,
             };
         },
-        [HIDE_LOADING_INDICATOR](state: any) {
+        [HIDE_LOADING_INDICATOR](state: IAppServiceState) {
             return {
                 ...state,
                 isBusy: false,
             };
         },
-        [AUTHORIZATION_STATE_CHANGED](state: any, action: any) {
+        [AUTHORIZATION_STATE_CHANGED](state: IAppServiceState, action: any) {
             return {
                 ...state,
                 isRegistered: action.payload.registrationState,
             };
         },
-        [AUTHORIZE_SUCCESS](state: any) {
+        [AUTHORIZE_SUCCESS](state: IAppServiceState) {
             return {
                 ...state,
                 isRegistered: true,
             };
         },
-        [LOGOUT_USER](state: any) {
+        [LOGOUT_USER](state: IAppServiceState) {
             return {
                 ...state,
                 isRegistered: false,
             };
         },
-        [USER_ALREADY_AUTHORIZED](state: any) {
+        [USER_ALREADY_AUTHORIZED](state: IAppServiceState) {
             return {
                 ...state,
                 isRegistered: true,
             };
         },
-        [CONNECTION_CHANGED](state: any, action: any) {
+        [CONNECTION_CHANGED](state: IAppServiceState, action: any) {
             return {
                 ...state,
-                ...action.payload,
+                netInfoState: action.payload.netInfoState,
             };
         },
-        [APP_STATE_CHANGED](state: any, action: any) {
+        [APP_STATE_CHANGED](state: IAppServiceState, action: any) {
             return {
                 ...state,
                 appState: action.payload.appState,

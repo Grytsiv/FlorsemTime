@@ -16,6 +16,7 @@ import {
     REVOKE_TOKEN_SUCCESS,
     REVOKE_TOKEN_FAILURE,
     LOGOUT_USER,
+    GET_USERS_ME_SUCCESS,
 } from '../actions/types';
 import * as Keychain from 'react-native-keychain';
 import {getTokenFromKeychain} from '../utils/keychainStorage.ts';
@@ -77,10 +78,10 @@ function* refreshToken(action: any) {
     try {
         // @ts-ignore
         const credentials = yield call([Keychain, Keychain.getGenericPassword]);
-        console.log(credentials);
+        //console.log(credentials);
         // @ts-ignore
         const token = yield call(getTokenFromKeychain, KEYCHAIN_TOKEN_KEY.accessToken);
-        console.log('token', token);
+        //console.log('token', token);
         // @ts-ignore
         const login: any = yield call(loginApi);
         const response = login.data as ILoginResponse;
@@ -94,6 +95,10 @@ function* refreshToken(action: any) {
             payload: {
                 refreshToken: response.Token,
             },
+        });
+        yield put({
+            type: GET_USERS_ME_SUCCESS,
+            payload: {...response},
         });
         //Reload the last call
         yield put({
@@ -122,6 +127,14 @@ function* revokeToken() {
             yield put({type: LOGOUT_USER});
             yield put({type: REVOKE_TOKEN_SUCCESS});
         } catch (error: any) {
+            if (error.status === 401) {
+                //Refresh Token, and then call this request again
+                yield put({
+                    type: REFRESH_TOKEN_REQUEST,
+                    payload: {type: REVOKE_TOKEN_REQUEST, payload: null},
+                });
+                return;
+            }
             console.log(error);
             yield put({
                 type: REVOKE_TOKEN_FAILURE,

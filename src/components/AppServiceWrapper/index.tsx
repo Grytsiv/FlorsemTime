@@ -2,7 +2,7 @@ import React, {useEffect, useRef} from 'react';
 import type {PropsWithChildren} from 'react';
 import {View, AppState, Appearance} from 'react-native';
 import {ActivityIndicator, Portal} from 'react-native-paper';
-import NetInfo from '@react-native-community/netinfo';
+import NetInfo, {NetInfoState} from '@react-native-community/netinfo';
 import ActionCreators from '../../actions';
 import {TRootState} from '../../boot/configureStore';
 import {useAppDispatch, useAppSelector} from '../../boot/hooks';
@@ -17,14 +17,11 @@ const AppServiceWrapper = ({
 
     const appState = useRef(AppState.currentState);
 
-    const netInfoState = useAppSelector(
-        (state: TRootState) => state.appServiceReducer.netInfoState,
+    const {netInfoState, isBusy} = useAppSelector(
+        (state: TRootState) => state.appServiceReducer,
     );
     const isDarkState = useAppSelector(
         (state: TRootState) => state.themeReducer.isDark,
-    );
-    const {isBusy} = useAppSelector(
-        (state: TRootState) => state.appServiceReducer,
     );
 
     const colorScheme = Appearance.getColorScheme();
@@ -42,8 +39,10 @@ const AppServiceWrapper = ({
     }, [dispatch]);
 
     useEffect(() => {
+        let netInfo: NetInfoState = netInfoState;
         const unsubscribe = NetInfo.addEventListener(state => {
-            if (JSON.stringify(state) !== JSON.stringify(netInfoState)) {
+            if (JSON.stringify(state) !== JSON.stringify(netInfo)) {
+                netInfo = state;
                 // Dispatch your actions here based on the netInfo state
                 dispatch(ActionCreators.connectionHasBeenChanged(state));
             }

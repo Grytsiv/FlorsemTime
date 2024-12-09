@@ -4,6 +4,7 @@ import {
     LOGIN_API,
     LOGOUT_API,
     LICENSE_API,
+    GET_LAST_PAYMENT_API,
     DEFAULT_TIME_OUT,
 } from '../config';
 import {getTokenFromKeychain} from '../utils/keychainStorage';
@@ -85,5 +86,6 @@ const licenseApi = createApiInstance(SERVER_URL + LICENSE_API);
 const createLicenceApi = (license: ICreateLicenseModel) => {
     return licenseApi.post('', {...license});
 };
+const lastPaymentApi = createApiInstance(SERVER_URL + GET_LAST_PAYMENT_API);
 
-export {loginApi, logoutApi, createLicenceApi};
+export {loginApi, logoutApi, createLicenceApi, lastPaymentApi};

@@ -16,5 +16,17 @@ const styles = StyleSheet.create({
         marginLeft: 24,
         marginRight: 24,
     },
+    firstTextLine: {
+        marginTop: 40,
+    },
+    textLine: {
+        marginTop: 10,
+    },
+    bottomButton: {
+        marginBottom: 40,
+    },
+    button: {
+        marginBottom: 20,
+    },
 });
 export default styles;

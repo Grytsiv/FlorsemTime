@@ -1,8 +1,5 @@
 export interface IRefreshResult {
     accessToken: string;
-    accessTokenExpirationDate: string;
-    additionalParameters?: { [name: string]: string };
-    idToken: string;
+    login: string;
     refreshToken: string | null;
-    tokenType: string;
 }

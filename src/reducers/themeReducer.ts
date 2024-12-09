@@ -1,6 +1,7 @@
 import createReducer from '../utils/createReducer';
 import {TOGGLE_THEME} from '../actions/types';
-interface IThemeState {
+
+export interface IThemeState {
     isDark: boolean;
 }
 const initialState: IThemeState = {

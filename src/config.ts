@@ -13,3 +13,4 @@ export const SERVER_URL: string = STAGING_SERVER_URL;
 export const LOGIN_API: string = '/api/users/login';
 export const LOGOUT_API: string = '/api/users/logout';
 export const LICENSE_API: string = '/api/payments/createlicence';
+export const GET_LAST_PAYMENT_API: string = '/api/payments/getLastPayment';

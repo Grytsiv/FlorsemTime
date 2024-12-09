@@ -8,6 +8,10 @@
   "homeScreen" : {
     "title": "Початковий",
     "label" : "Початковий екран скоро тут буде",
+    "licenseValid" : "Ліцензія дійсна: {{validDays}} днів, до: {{validTo}}",
+    "cardNumber" : "Номер Картки: {{cardNumber}}",
+    "cardOwner" : "Власник Картки: {{cardOwner}}",
+    "lastPaymentId" : "ID крайньої оплати: {{lastPaymentId}}",
     "arrivalDate" : "License date",
     "logoutButton" : "Вийти",
     "renewLicenseText" : "Продовжити ліцензію на {{days}} днів",

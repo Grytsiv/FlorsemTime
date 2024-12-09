@@ -8,6 +8,10 @@
   "homeScreen" : {
     "title" : "Home",
     "label" : "Home screen will be here soon",
+    "licenseValid" : "License valid: {{validDays}} days, To: {{validTo}}",
+    "cardNumber" : "Card Number: {{cardNumber}}",
+    "cardOwner" : "Card Owner: {{cardOwner}}",
+    "lastPaymentId" : "Last Payment ID: {{lastPaymentId}}",
     "arrivalDate" : "License date",
     "logoutButton" : "Logout",
     "renewLicenseText" : "Renew license for {{days}} days",

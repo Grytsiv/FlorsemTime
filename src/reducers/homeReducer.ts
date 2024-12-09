@@ -1,20 +1,22 @@
 import createReducer from '../utils/createReducer';
 import {
-    GET_USERS_ME_SUCCESS,
-    GET_USERS_ME_FAILURE,
+    GET_LAST_PAYMENT_SUCCESS,
+    RENEW_LICENSE_SUCCESS,
     SHOW_HOME_ERROR,
     HIDE_HOME_ERROR,
 } from '../actions/types';
 import moment from 'moment/moment';
-interface IHomeReducerState {
+import {ICreateLicenseResponse, LastLicenseModel} from '../models/ICreateLicenseModel.ts';
+
+export interface IHomeState {
     licenseDate: Date;
-    data: any
+    lastPayment: ICreateLicenseResponse,
     error: any
     isShownErrorAlert: boolean
 }
-const initialState: IHomeReducerState = {
+const initialState: IHomeState = {
     licenseDate: new Date(moment(new Date()).add(1, 'month').toDate()),
-    data: {},
+    lastPayment: new LastLicenseModel(),
     error: {},
     isShownErrorAlert: false,
 };
@@ -23,18 +25,11 @@ const homeReducer = createReducer(
         ...initialState,
     },
     {
-        [GET_USERS_ME_SUCCESS](state: any, action: any) {
+        [GET_LAST_PAYMENT_SUCCESS || RENEW_LICENSE_SUCCESS](state: any, action: any) {
             return {
                 ...state,
-                ...action.payload,
-                error: {},
-            };
-        },
-        [GET_USERS_ME_FAILURE](state: any, action: any) {
-            return {
-                ...state,
-                error: action.payload,
-                isShownErrorAlert: true,
+                lastPayment: action.payload,
+                isShownErrorAlert: false,
             };
         },
         [SHOW_HOME_ERROR](state: any, action: any) {

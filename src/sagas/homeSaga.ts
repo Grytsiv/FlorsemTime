@@ -1,10 +1,14 @@
-import {put, call, takeEvery, select, delay, takeLeading} from 'redux-saga/effects';
+import {put, call, select, delay, takeLeading} from 'redux-saga/effects';
+import {PayloadAction} from '@reduxjs/toolkit';
 import {
     SHOW_LOADING_INDICATOR,
     HIDE_LOADING_INDICATOR,
     GET_USERS_ME_REQUEST,
     GET_USERS_ME_SUCCESS,
     GET_USERS_ME_FAILURE,
+    GET_LAST_PAYMENT_REQUEST,
+    GET_LAST_PAYMENT_SUCCESS,
+    GET_LAST_PAYMENT_FAILURE,
     REFRESH_TOKEN_REQUEST,
     LOGOUT_USER,
     NONE_INTERNET_CONNECTION,
@@ -13,9 +17,9 @@ import {
     RENEW_LICENSE_FAILURE,
 } from '../actions/types';
 import {TRootState} from '../boot/configureStore';
-import {loginApi, createLicenceApi} from '../api/api';
-import {PayloadAction} from '@reduxjs/toolkit';
-import {ICreateLicenseResponse} from '../models/ICreateLicenseModel.ts';
+import {loginApi, createLicenceApi, lastPaymentApi} from '../api/api';
+import {ICreateLicenseResponse} from '../models/ICreateLicenseModel';
+import {ILoginResponse} from '../models/ILoginResponse';
 
 function* getUserInfo() {
     let state: TRootState = yield select();
@@ -32,7 +36,7 @@ function* getUserInfo() {
     try {
         // @ts-ignore
         const response = yield call(loginApi);
-        const apiResponse = response.data as any;
+        const apiResponse = response.data as ILoginResponse;
         yield put({
             type: GET_USERS_ME_SUCCESS,
             payload: {...apiResponse},
@@ -53,9 +57,48 @@ function* getUserInfo() {
         yield put({type: LOGOUT_USER});
     }
     yield put({type: HIDE_LOADING_INDICATOR});
+    // yield put({type: GET_LAST_PAYMENT_REQUEST});
 }
 
-function* renewLicense({payload}: PayloadAction<string>) {
+function* getLastPayment() {
+    let state: TRootState = yield select();
+    // show a loader
+    yield put({type: SHOW_LOADING_INDICATOR});
+    //wait for a stable internet connection
+    while (
+        state.appServiceReducer.netInfoState.isInternetReachable === null ||
+        state.appServiceReducer.netInfoState.isInternetReachable === undefined
+        ) {
+        yield delay(100);
+        state = yield select();
+    }
+    try {
+        // @ts-ignore
+        const response = yield call(lastPaymentApi);
+        const apiResponse = response.data as ICreateLicenseResponse;
+        yield put({
+            type: GET_LAST_PAYMENT_SUCCESS,
+            payload: {...apiResponse},
+        });
+    } catch (error: any) {
+        if (error.status === 401) {
+            //Refresh Token, and then call this request again
+            yield put({
+                type: REFRESH_TOKEN_REQUEST,
+                payload: {type: GET_LAST_PAYMENT_REQUEST, payload: null},
+            });
+            return;
+        }
+        yield put({
+            type: GET_LAST_PAYMENT_FAILURE,
+            payload: {...error},
+        });
+        yield put({type: LOGOUT_USER});
+    }
+    yield put({type: HIDE_LOADING_INDICATOR});
+}
+
+function* renewLicense({payload, type}: PayloadAction<string>) {
     // @ts-ignore
     const {license} = payload;
     console.log(license);
@@ -66,8 +109,8 @@ function* renewLicense({payload}: PayloadAction<string>) {
         yield put({type: SHOW_LOADING_INDICATOR});
         try {
             // @ts-ignore
-            const renewLicense: any = yield call(createLicenceApi, license);
-            const response = renewLicense.data as ICreateLicenseResponse;
+            const newLicense: any = yield call(createLicenceApi, license);
+            const response = newLicense.data as ICreateLicenseResponse;
             console.log('response', response);
             yield put({
                 type: RENEW_LICENSE_SUCCESS,
@@ -79,7 +122,7 @@ function* renewLicense({payload}: PayloadAction<string>) {
                 //Refresh Token, and then call this request again
                 yield put({
                     type: REFRESH_TOKEN_REQUEST,
-                    payload,
+                    payload: {type, payload},
                 });
                 return;
             }
@@ -96,6 +139,7 @@ function* renewLicense({payload}: PayloadAction<string>) {
 }
 
 export default function* homeScreenFlow() {
-    yield takeEvery(GET_USERS_ME_REQUEST, getUserInfo);
+    yield takeLeading(GET_USERS_ME_REQUEST, getUserInfo);
+    yield takeLeading(GET_LAST_PAYMENT_REQUEST, getLastPayment);
     yield takeLeading(RENEW_LICENSE_REQUEST, renewLicense);
 }
