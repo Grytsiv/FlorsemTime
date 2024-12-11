@@ -1,7 +1,4 @@
+import {createAction} from '@reduxjs/toolkit';
 import {TOGGLE_THEME} from './types';
-export function setIsDarkTheme(value: boolean) {
-    return {
-        type: TOGGLE_THEME,
-        isDark: value,
-    };
-}
+
+export const setIsDarkTheme = createAction<boolean>(TOGGLE_THEME);

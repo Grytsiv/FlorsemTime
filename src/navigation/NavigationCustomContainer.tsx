@@ -82,11 +82,11 @@ const NavigationCustomContainer: React.FC<IProps> = (props: IProps) => {
                     } else {
                         console.log('No credentials stored');
                         //setUserRegistered(false);
-                        dispatch(ActionCreators.registrationHasBeenChanged(false));
+                        dispatch(ActionCreators.authStateChanged(false));
                     }
                 } catch (error) {
                     console.log("Keychain couldn't be accessed!", error);
-                    dispatch(ActionCreators.registrationHasBeenChanged(false));
+                    dispatch(ActionCreators.authStateChanged(false));
                 }
             };
             checkKeychain().then(() =>

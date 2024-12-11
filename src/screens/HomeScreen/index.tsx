@@ -6,6 +6,7 @@ import {useTranslation} from 'react-i18next';
 import moment from 'moment';
 import {TRootState} from '../../boot/configureStore.ts';
 import {CreateLicenseModel} from '../../models/ICreateLicenseModel.ts';
+import {RefreshAction} from '../../models/IRefreshResult.ts';
 import {useAppDispatch, useAppSelector} from '../../boot/hooks';
 import ActionCreators from '../../actions';
 import styles from './styles';
@@ -66,7 +67,7 @@ const HomeScreen: React.FC = () => {
                 mode="outlined"
                 onPress={() => {
                     const newLicense = new CreateLicenseModel(days);
-                    console.log(newLicense);
+                    console.log('Press:', newLicense);
                     dispatch(ActionCreators.handleRenewLicense(newLicense));
                 }}>
                 {t('homeScreen.renewLicenseText', {days: days.toString()})}
@@ -74,7 +75,7 @@ const HomeScreen: React.FC = () => {
             <Button
                 style={styles.bottomButton}
                 mode="outlined"
-                onPress={() => dispatch(ActionCreators.handleRefresh())}>
+                onPress={() => dispatch(ActionCreators.handleRefresh(new RefreshAction()))}>
                 {t('homeScreen.refreshTokenButton')}
             </Button>
         </View>

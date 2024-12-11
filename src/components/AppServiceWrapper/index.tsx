@@ -20,12 +20,12 @@ const AppServiceWrapper = ({
     const {netInfoState, isBusy} = useAppSelector(
         (state: TRootState) => state.appServiceReducer,
     );
-    const isDarkState = useAppSelector(
-        (state: TRootState) => state.themeReducer.isDark,
+    const {isDark} = useAppSelector(
+        (state: TRootState) => state.themeReducer,
     );
 
     const colorScheme = Appearance.getColorScheme();
-    const isDark = colorScheme === 'dark';
+    const isDarkScheme = colorScheme === 'dark';
 
     useEffect(() => {
         const subscription = AppState.addEventListener('change', nextAppState => {
@@ -52,8 +52,8 @@ const AppServiceWrapper = ({
     }, [dispatch, netInfoState]);
 
     useEffect(() => {
-        if (isDarkState !== isDark) {
-            dispatch(ActionCreators.setIsDarkTheme(isDark));
+        if (isDark !== isDarkScheme) {
+            dispatch(ActionCreators.setIsDarkTheme(isDarkScheme));
         }
     });
 

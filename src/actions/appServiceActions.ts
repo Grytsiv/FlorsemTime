@@ -1,12 +1,21 @@
-import {CONNECTION_CHANGED, APP_STATE_CHANGED} from './types';
-import {NetInfoState} from '@react-native-community/netinfo';
-export const connectionHasBeenChanged = (netInfoState: NetInfoState) => ({
-    type: CONNECTION_CHANGED,
-    payload: {netInfoState},
-});
-export function appStateChanged(appState: string) {
-    return {
-        type: APP_STATE_CHANGED,
-        payload: {appState},
-    };
-}
+import {createAction} from '@reduxjs/toolkit';
+import {
+    CONNECTION_CHANGED,
+    APP_STATE_CHANGED,
+    AUTHORIZATION_STATE_CHANGED,
+    SHOW_LOADING_INDICATOR,
+    HIDE_LOADING_INDICATOR,
+    SHOW_ERROR,
+    HIDE_ERROR,
+    LOGOUT_USER,
+} from './types';
+import {INetInfo} from '../models/netInfoModel.ts';
+
+export const connectionHasBeenChanged = createAction<INetInfo>(CONNECTION_CHANGED);
+export const appStateChanged = createAction<string>(APP_STATE_CHANGED);
+export const authStateChanged = createAction<boolean>(AUTHORIZATION_STATE_CHANGED);
+export const showLoadingIndicator = createAction(SHOW_LOADING_INDICATOR);
+export const hideLoadingIndicator = createAction(HIDE_LOADING_INDICATOR);
+export const showErrorAlert = createAction(SHOW_ERROR);
+export const hideErrorAlert = createAction(HIDE_ERROR);
+export const logoutUser = createAction(LOGOUT_USER);

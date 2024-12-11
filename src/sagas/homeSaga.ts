@@ -18,7 +18,7 @@ import {
 } from '../actions/types';
 import {TRootState} from '../boot/configureStore';
 import {loginApi, createLicenceApi, lastPaymentApi} from '../api/api';
-import {ICreateLicenseResponse} from '../models/ICreateLicenseModel';
+import {ICreateLicenseModel, ICreateLicenseResponse} from '../models/ICreateLicenseModel';
 import {ILoginResponse} from '../models/ILoginResponse';
 
 function* getUserInfo() {
@@ -98,10 +98,8 @@ function* getLastPayment() {
     yield put({type: HIDE_LOADING_INDICATOR});
 }
 
-function* renewLicense({payload, type}: PayloadAction<string>) {
-    // @ts-ignore
-    const {license} = payload;
-    console.log(license);
+function* renewLicense({payload, type}: PayloadAction<ICreateLicenseModel>) {
+    console.log('SAGA:', payload);
     // @ts-ignore
     const state = yield select();
     if (state.appServiceReducer.netInfoState.isInternetReachable) {
@@ -109,7 +107,7 @@ function* renewLicense({payload, type}: PayloadAction<string>) {
         yield put({type: SHOW_LOADING_INDICATOR});
         try {
             // @ts-ignore
-            const newLicense: any = yield call(createLicenceApi, license);
+            const newLicense: any = yield call(createLicenceApi, payload);
             const response = newLicense.data as ICreateLicenseResponse;
             console.log('response', response);
             yield put({

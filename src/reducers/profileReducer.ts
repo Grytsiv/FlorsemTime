@@ -1,26 +1,20 @@
-import createReducer from '../utils/createReducer';
-import {
-    GET_USERS_ME_SUCCESS,
-} from '../actions/types';
+import {createReducer} from '@reduxjs/toolkit';
+import {getUserSuccess} from '../actions/profileActions.ts';
 import {ILoginResponse, User} from '../models/ILoginResponse.ts';
 
-export interface IProfileState {
+interface IProfileState {
     user: ILoginResponse
 }
 const initialState: IProfileState = {
     user: new User(),
 };
-const profileReducer = createReducer(
-    {
-        ...initialState,
-    },
-    {
-        [GET_USERS_ME_SUCCESS](state: IProfileState, action: any) {
-            return {
-                ...state,
-                user: {...action.payload},
-            };
-        },
+
+const profileReducer = createReducer(initialState, (builder) => {
+    builder
+        .addCase(getUserSuccess, (state, action) => {
+            state.user = action.payload;
+        });
     },
 );
+
 export default profileReducer;

@@ -1,11 +1,12 @@
 import React, {FC} from 'react';
 import {View} from 'react-native';
 import {Button, TextInput} from 'react-native-paper';
-import {useAppDispatch, useAppSelector} from '../../boot/hooks';
-import ActionCreators from '../../actions';
-import {TRootState} from '../../boot/configureStore';
-import styles from './styles';
 import {useTranslation} from 'react-i18next';
+import {useAppDispatch, useAppSelector} from '../../boot/hooks';
+import {TRootState} from '../../boot/configureStore';
+import ActionCreators from '../../actions';
+import {Credentials} from '../../models/ICredentials.ts';
+import styles from './styles';
 
 const LoginScreen: FC = () => {
     const dispatch = useAppDispatch();
@@ -14,19 +15,18 @@ const LoginScreen: FC = () => {
         (state: TRootState) => state.appServiceReducer.isBusy,
     );
 
-    const [emailInput, setEmail] = React.useState('');
-    const [passwordInput, setPassword] = React.useState('');
+    const [credentialsInput, setCredentials] = React.useState(new Credentials());
     const [flatTextSecureEntry, setFlatTextSecureEntry] = React.useState(true);
 
     const onChangeEmail = React.useCallback(
         (text: React.SetStateAction<string>) => {
-            setEmail(text);
+            setCredentials(value => new Credentials(text.toString(), value.password));
         },
         [],
     );
     const onChangePassword = React.useCallback(
         (text: React.SetStateAction<string>) => {
-            setPassword(text);
+            setCredentials(value => new Credentials(value.login, text.toString()));
         },
         [],
     );
@@ -36,7 +36,7 @@ const LoginScreen: FC = () => {
                 style={styles.textInput}
                 disabled={isBusy}
                 label={t('loginScreen.emailLabel')}
-                value={emailInput}
+                value={credentialsInput.login}
                 onChangeText={onChangeEmail}
                 mode="outlined"
                 autoCapitalize="characters"
@@ -48,7 +48,7 @@ const LoginScreen: FC = () => {
                 style={styles.textInput}
                 disabled={isBusy}
                 label={t('loginScreen.passwordLabel')}
-                value={passwordInput}
+                value={credentialsInput.password}
                 onChangeText={onChangePassword}
                 mode="outlined"
                 autoCapitalize="none"
@@ -72,7 +72,7 @@ const LoginScreen: FC = () => {
                 icon="login"
                 mode="outlined"
                 disabled={isBusy}
-                onPress={() => dispatch(ActionCreators.handleAuthorize(emailInput, passwordInput))}>
+                onPress={() => dispatch(ActionCreators.handleAuthorize(credentialsInput))}>
                 {t('loginScreen.loginButton')}
             </Button>
         </View>

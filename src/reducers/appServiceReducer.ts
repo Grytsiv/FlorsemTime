@@ -1,88 +1,67 @@
-import createReducer from '../utils/createReducer';
+import {createReducer} from '@reduxjs/toolkit';
 import {
-    SHOW_LOADING_INDICATOR,
-    HIDE_LOADING_INDICATOR,
-    AUTHORIZATION_STATE_CHANGED,
-    AUTHORIZE_SUCCESS,
-    LOGOUT_USER,
-    USER_ALREADY_AUTHORIZED,
-    CONNECTION_CHANGED,
-    APP_STATE_CHANGED,
-} from '../actions/types';
-import {NetInfoStateType} from '@react-native-community/netinfo';
-export interface IAppServiceState {
+    showLoadingIndicator,
+    hideLoadingIndicator,
+    authStateChanged,
+    connectionHasBeenChanged,
+    appStateChanged,
+    showErrorAlert,
+    hideErrorAlert,
+    logoutUser,
+} from '../actions/appServiceActions.ts';
+import {authorizationSuccess, userAlreadyAuthorized} from '../actions/authenticationActions.ts';
+import {INetInfo, netInfoDefault} from '../models/netInfoModel.ts';
+
+interface IAppServiceState {
     isBusy: boolean;
     isRegistered: undefined | boolean;
-    appState: 'none' | 'active' | 'background' | 'inactive';
-    netInfoState: {
-        details: any | null;
-        isConnected: boolean;
-        isInternetReachable: boolean | null;
-        type: NetInfoStateType;
-    };
+    appState: string;
+    netInfoState: INetInfo;
+    error: any;
+    isShownErrorAlert: boolean;
 }
 const initialState: IAppServiceState = {
     isBusy: false,
     isRegistered: undefined,
     appState: 'none',
-    netInfoState: {
-        details: {},
-        isConnected: false,
-        isInternetReachable: false,
-        type: NetInfoStateType.unknown,
-    },
+    netInfoState: netInfoDefault,
+    error: {},
+    isShownErrorAlert: false,
 };
-const appServiceReducer = createReducer(
-    {...initialState},
-    {
-        [SHOW_LOADING_INDICATOR](state: IAppServiceState) {
-            return {
-                ...state,
-                isBusy: true,
-            };
-        },
-        [HIDE_LOADING_INDICATOR](state: IAppServiceState) {
-            return {
-                ...state,
-                isBusy: false,
-            };
-        },
-        [AUTHORIZATION_STATE_CHANGED](state: IAppServiceState, action: any) {
-            return {
-                ...state,
-                isRegistered: action.payload.registrationState,
-            };
-        },
-        [AUTHORIZE_SUCCESS](state: IAppServiceState) {
-            return {
-                ...state,
-                isRegistered: true,
-            };
-        },
-        [LOGOUT_USER](state: IAppServiceState) {
-            return {
-                ...state,
-                isRegistered: false,
-            };
-        },
-        [USER_ALREADY_AUTHORIZED](state: IAppServiceState) {
-            return {
-                ...state,
-                isRegistered: true,
-            };
-        },
-        [CONNECTION_CHANGED](state: IAppServiceState, action: any) {
-            return {
-                ...state,
-                netInfoState: action.payload.netInfoState,
-            };
-        },
-        [APP_STATE_CHANGED](state: IAppServiceState, action: any) {
-            return {
-                ...state,
-                appState: action.payload.appState,
-            };
-        },
-    },
+
+const appServiceReducer = createReducer(initialState, (builder) => {
+    builder
+        .addCase(showLoadingIndicator, (state) => {
+           state.isBusy = true;
+        })
+        .addCase(hideLoadingIndicator, (state) => {
+            state.isBusy = false;
+        })
+        .addCase(authStateChanged, (state, action) => {
+            state.isRegistered = action.payload;
+        })
+        .addCase(authorizationSuccess, (state) => {
+            state.isRegistered = true;
+        })
+        .addCase(logoutUser, (state) => {
+            state.isRegistered = false;
+        })
+        .addCase(userAlreadyAuthorized, (state) => {
+            state.isRegistered = true;
+        })
+        .addCase(connectionHasBeenChanged, (state, action) => {
+            state.netInfoState = action.payload;
+        })
+        .addCase(appStateChanged, (state, action) => {
+            state.appState = action.payload;
+        })
+        .addCase(showErrorAlert, (state) => {
+            state.isShownErrorAlert = true;
+        })
+        .addCase(hideErrorAlert, (state) => {
+            state.isShownErrorAlert = false;
+        });
+    }
 );
+
 export default appServiceReducer;

@@ -1,11 +1,7 @@
-import createReducer from '../utils/createReducer';
-import {
-    AUTHORIZE_SUCCESS,
-    USER_ALREADY_AUTHORIZED,
-    REFRESH_TOKEN_SUCCESS,
-} from '../actions/types';
+import {createReducer} from '@reduxjs/toolkit';
+import {authorizationSuccess, refreshTokenSuccess, userAlreadyAuthorized} from '../actions/authenticationActions.ts';
 
-export interface IAuthenticationState {
+interface IAuthenticationState {
     accessToken: string;
     refreshToken: string;
 }
@@ -13,32 +9,20 @@ const initialState: IAuthenticationState = {
     accessToken: '',
     refreshToken: '',
 };
-const authenticationReducer = createReducer(
-    {
-        ...initialState,
-    },
-    {
-        [AUTHORIZE_SUCCESS](state: any, action: any) {
-            return {
-                ...state,
-                ...action.payload,
-                error: {},
-            };
-        },
-        [USER_ALREADY_AUTHORIZED](state: any, action: any) {
-            return {
-                ...state,
-                ...action.payload,
-                error: {},
-            };
-        },
-        [REFRESH_TOKEN_SUCCESS](state: any, action: any) {
-            return {
-                ...state,
-                ...action.payload,
-                error: {},
-            };
-        },
-    },
+const authenticationReducer = createReducer(initialState, (builder) => {
+    builder
+        .addCase(authorizationSuccess,(state, action) => {
+            state.accessToken = action.payload.accessToken;
+            state.refreshToken = action.payload.refreshToken;
+        })
+        .addCase(userAlreadyAuthorized,(state, action) => {
+            state.accessToken = action.payload.accessToken;
+            state.refreshToken = action.payload.refreshToken!;
+        })
+        .addCase(refreshTokenSuccess,(state, action) => {
+            state.refreshToken = action.payload.refreshToken;
+        });
+    }
 );
+
 export default authenticationReducer;

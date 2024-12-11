@@ -1,29 +1,18 @@
+import {createAction} from '@reduxjs/toolkit';
 import {
-    AUTHORIZATION_STATE_CHANGED,
     AUTHORIZE_REQUEST,
     USER_ALREADY_AUTHORIZED,
     REFRESH_TOKEN_REQUEST,
     REVOKE_TOKEN_REQUEST,
-    HIDE_LOADING_INDICATOR,
+    AUTHORIZE_SUCCESS,
+    REFRESH_TOKEN_SUCCESS,
 } from './types';
-import {IRefreshResult} from '../models/IRefreshResult.ts';
+import {IAuthorizeResult, IRefreshAction, IRefreshResult} from '../models/IRefreshResult.ts';
+import {ICredentials} from '../models/ICredentials.ts';
 
-export const registrationHasBeenChanged = (registrationState: boolean) => ({
-    type: AUTHORIZATION_STATE_CHANGED,
-    payload: {registrationState},
-});
-export const handleAuthorize = (email: string = '1', password: string = '1') => ({
-    type: AUTHORIZE_REQUEST,
-    payload: {email, password},
-});
-export const userAlreadyAuthorized = (newAuthState: IRefreshResult) => ({
-    type: USER_ALREADY_AUTHORIZED,
-    payload: newAuthState,
-});
-export const handleRefresh = (type: string = HIDE_LOADING_INDICATOR, payload: string = '') => ({
-    type: REFRESH_TOKEN_REQUEST,
-    payload: {type, payload},
-});
-export const handleRevoke = () => ({
-    type: REVOKE_TOKEN_REQUEST,
-});
+export const handleAuthorize = createAction<ICredentials>(AUTHORIZE_REQUEST);
+export const userAlreadyAuthorized = createAction<IRefreshResult>(USER_ALREADY_AUTHORIZED);
+export const handleRefresh = createAction<IRefreshAction>(REFRESH_TOKEN_REQUEST);
+export const handleRevoke = createAction(REVOKE_TOKEN_REQUEST);
+export const authorizationSuccess = createAction<IAuthorizeResult>(AUTHORIZE_SUCCESS);
+export const refreshTokenSuccess = createAction<{refreshToken: string}>(REFRESH_TOKEN_SUCCESS);

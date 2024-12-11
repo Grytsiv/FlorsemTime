@@ -23,19 +23,19 @@ import {getTokenFromKeychain} from '../utils/keychainStorage.ts';
 import {KEYCHAIN_TOKEN_KEY} from '../models/keychainStorage.ts';
 import {loginApi, logoutApi} from '../api/api.ts';
 import {ILoginResponse} from '../models/ILoginResponse.ts';
+import {ICredentials} from '../models/ICredentials.ts';
+import {IAuthorizeResult} from '../models/IRefreshResult.ts';
 
-function* register({payload}: PayloadAction<string>) {
-    // @ts-ignore
-    const {email, password} = payload;
+function* register({payload}: PayloadAction<ICredentials>) {
     // @ts-ignore
     const state = yield select();
     if (state.appServiceReducer.netInfoState.isInternetReachable) {
         // show a loader
         yield put({type: SHOW_LOADING_INDICATOR});
         try {
-            const token = Buffer.from(`${email}:${password}`).toString('base64');
-            const username: string = email;
-            let stringify = {
+            const token = Buffer.from(`${payload.login}:${payload.password}`).toString('base64');
+            const username: string = payload.login;
+            let stringify: IAuthorizeResult = {
                 accessToken: token,
                 refreshToken: '',
             };

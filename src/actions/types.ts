@@ -3,6 +3,8 @@ export const CONNECTION_CHANGED: string = 'CONNECTION_CHANGED';
 export const APP_STATE_CHANGED: string = 'APP_STATE_CHANGED';
 export const SHOW_LOADING_INDICATOR: string = 'SHOW_LOADING_INDICATOR';
 export const HIDE_LOADING_INDICATOR: string = 'HIDE_LOADING_INDICATOR';
+export const SHOW_ERROR: string = 'SHOW_ERROR';
+export const HIDE_ERROR: string = 'HIDE_ERROR';
 export const NONE_INTERNET_CONNECTION: string = 'NONE_INTERNET_CONNECTION';
 // THEMING
 export const TOGGLE_THEME: string = 'TOGGLE_THEME';
@@ -24,8 +26,6 @@ export const GET_USERS_ME_SUCCESS: string = 'GET_USERS_ME_SUCCESS';
 export const GET_USERS_ME_FAILURE: string = 'GET_USERS_ME_FAILURE';
 export const LOGOUT_USER: string = 'LOGOUT_USER';
 //HOME
-export const SHOW_HOME_ERROR: string = 'SHOW_HOME_ERROR';
-export const HIDE_HOME_ERROR: string = 'HIDE_HOME_ERROR';
 export const RENEW_LICENSE_REQUEST: string = 'RENEW_LICENSE_REQUEST';
 export const RENEW_LICENSE_SUCCESS: string = 'RENEW_LICENSE_SUCCESS';
 export const RENEW_LICENSE_FAILURE: string = 'RENEW_LICENSE_FAILURE';
