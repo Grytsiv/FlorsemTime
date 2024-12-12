@@ -14,7 +14,7 @@
     "lastPaymentId" : "Last Payment ID: {{lastPaymentId}}",
     "arrivalDate" : "License date",
     "logoutButton" : "Logout",
-    "renewLicenseText" : "Renew license for {{days}} days",
+    "renewLicenseText" : "Renew license for next {{days}} days",
     "refreshTokenButton" : "Refresh Token"
   }
 }
