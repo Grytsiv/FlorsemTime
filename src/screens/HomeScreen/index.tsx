@@ -42,10 +42,10 @@ const HomeScreen: React.FC = () => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.firstTextLine}>{t('homeScreen.licenseValid', {validDays, validTo})}</Text>
-            <Text style={styles.textLine}>{t('homeScreen.cardNumber', {cardNumber:lastPayment.CardNumber})}</Text>
-            <Text style={styles.textLine}>{t('homeScreen.cardOwner', {cardOwner:lastPayment.CardOwnerName})}</Text>
-            <Text style={styles.textLine}>{t('homeScreen.lastPaymentId', {lastPaymentId:lastPayment.Id})}</Text>
+            {lastPayment.Id > 0 && <Text style={styles.firstTextLine}>{t('homeScreen.licenseValid', {validDays, validTo})}</Text>}
+            {lastPayment.Id > 0 && <Text style={styles.textLine}>{t('homeScreen.cardNumber', {cardNumber:lastPayment.CardNumber})}</Text>}
+            {lastPayment.Id > 0 && <Text style={styles.textLine}>{t('homeScreen.cardOwner', {cardOwner:lastPayment.CardOwnerName})}</Text>}
+            {lastPayment.Id > 0 && <Text style={styles.textLine}>{t('homeScreen.lastPaymentId', {lastPaymentId:lastPayment.Id})}</Text>}
             <DatePickerInput
                 style={styles.dateInput}
                 locale="en"

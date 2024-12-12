@@ -20,6 +20,7 @@ import {TRootState} from '../boot/configureStore';
 import {loginApi, createLicenceApi, lastPaymentApi} from '../api/api';
 import {ICreateLicenseModel, ICreateLicenseResponse} from '../models/ICreateLicenseModel';
 import {ILoginResponse} from '../models/ILoginResponse';
+import {isInternetReachable} from '../reducers';
 
 function* getUserInfo() {
     let state: TRootState = yield select();
@@ -57,7 +58,6 @@ function* getUserInfo() {
         yield put({type: LOGOUT_USER});
     }
     yield put({type: HIDE_LOADING_INDICATOR});
-    // yield put({type: GET_LAST_PAYMENT_REQUEST});
 }
 
 function* getLastPayment() {
@@ -95,21 +95,26 @@ function* getLastPayment() {
         });
         yield put({type: LOGOUT_USER});
     }
+
+    //In case if no user profile exists, call user profile
+    state = yield select();
+    if (state.profileReducer.user.LastActivityTime === '') {
+        yield put({type: GET_USERS_ME_REQUEST});
+    }
+
     yield put({type: HIDE_LOADING_INDICATOR});
 }
 
 function* renewLicense({payload, type}: PayloadAction<ICreateLicenseModel>) {
-    console.log('SAGA:', payload);
-    // @ts-ignore
-    const state = yield select();
-    if (state.appServiceReducer.netInfoState.isInternetReachable) {
+    const isInternet: boolean | null = yield select(isInternetReachable);
+    if (isInternet) {
         // show a loader
         yield put({type: SHOW_LOADING_INDICATOR});
         try {
             // @ts-ignore
             const newLicense: any = yield call(createLicenceApi, payload);
             const response = newLicense.data as ICreateLicenseResponse;
-            console.log('response', response);
+            //console.log('response', response);
             yield put({
                 type: RENEW_LICENSE_SUCCESS,
                 payload: {...response},

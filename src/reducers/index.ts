@@ -4,6 +4,7 @@ import authenticationReducer from './authenticationReducer';
 import homeReducer from './homeReducer';
 import profileReducer from './profileReducer';
 import themeReducer from './themeReducer';
+import {TRootState} from '../boot/configureStore.ts';
 
 export const rootReducer = combineReducers({
     appServiceReducer,
@@ -12,3 +13,5 @@ export const rootReducer = combineReducers({
     profileReducer,
     themeReducer,
 });
+
+export const isInternetReachable = (state: TRootState) => state.appServiceReducer.netInfoState.isInternetReachable;

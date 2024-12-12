@@ -24,12 +24,12 @@ import {KEYCHAIN_TOKEN_KEY} from '../models/keychainStorage.ts';
 import {loginApi, logoutApi} from '../api/api.ts';
 import {ILoginResponse} from '../models/ILoginResponse.ts';
 import {ICredentials} from '../models/ICredentials.ts';
-import {IAuthorizeResult} from '../models/IRefreshResult.ts';
+import {IAuthorizeResult, IRefreshAction} from '../models/IRefreshResult.ts';
+import {isInternetReachable} from '../reducers';
 
 function* register({payload}: PayloadAction<ICredentials>) {
-    // @ts-ignore
-    const state = yield select();
-    if (state.appServiceReducer.netInfoState.isInternetReachable) {
+    const isInternet: boolean | null = yield select(isInternetReachable);
+    if (isInternet) {
         // show a loader
         yield put({type: SHOW_LOADING_INDICATOR});
         try {
@@ -43,7 +43,7 @@ function* register({payload}: PayloadAction<ICredentials>) {
             // @ts-ignore
             const login: any = yield call(loginApi);
             const response = login.data as ILoginResponse;
-            console.log('response', response.Token);
+            //console.log('response', response.Token);
             stringify = {
                 accessToken: token,
                 refreshToken: response.Token,
@@ -73,8 +73,7 @@ function* register({payload}: PayloadAction<ICredentials>) {
     }
 }
 
-function* refreshToken(action: any) {
-    const {type, payload} = action.payload;
+function* refreshToken({payload}: PayloadAction<IRefreshAction>) {
     try {
         // @ts-ignore
         const credentials = yield call([Keychain, Keychain.getGenericPassword]);
@@ -102,8 +101,8 @@ function* refreshToken(action: any) {
         });
         //Reload the last call
         yield put({
-            type,
-            payload,
+            type: payload.type,
+            payload: payload.payload,
         });
     } catch (error: any) {
         console.log(error);
@@ -116,9 +115,8 @@ function* refreshToken(action: any) {
 }
 
 function* revokeToken() {
-    // @ts-ignore
-    const state = yield select();
-    if (state.appServiceReducer.netInfoState.isInternetReachable) {
+    const isInternet: boolean | null = yield select(isInternetReachable);
+    if (isInternet) {
         // show a loader
         yield put({type: SHOW_LOADING_INDICATOR});
         try {
