@@ -30,6 +30,12 @@ npm run android
 
 # OR using Yarn
 yarn android
+# Generate Android release apk using Yarn
+yarn android --mode release
+# Generate Android release apk using npm
+npm run android -- --mode="release"
+#Generating the release AAB
+npx react-native build-android --mode=release
 ```
 
 ### For iOS
