@@ -1,4 +1,4 @@
-import {put, call, takeEvery, takeLeading, select} from 'redux-saga/effects';
+import {put, call, takeLeading, select} from 'redux-saga/effects';
 import {Buffer} from 'buffer';
 import {PayloadAction} from '@reduxjs/toolkit';
 import {
@@ -12,6 +12,9 @@ import {
     REFRESH_TOKEN_REQUEST,
     REFRESH_TOKEN_SUCCESS,
     REFRESH_TOKEN_FAILURE,
+    GET_DEVICE_REQUEST,
+    GET_DEVICE_SUCCESS,
+    GET_DEVICE_FAILURE,
     REVOKE_TOKEN_REQUEST,
     REVOKE_TOKEN_SUCCESS,
     REVOKE_TOKEN_FAILURE,
@@ -21,10 +24,11 @@ import {
 import * as Keychain from 'react-native-keychain';
 import {getTokenFromKeychain} from '../utils/keychainStorage.ts';
 import {KEYCHAIN_TOKEN_KEY} from '../models/keychainStorage.ts';
-import {loginApi, logoutApi} from '../api/api.ts';
+import {deviceApi, loginApi, logoutApi} from '../api/api.ts';
 import {ILoginResponse} from '../models/ILoginResponse.ts';
 import {ICredentials} from '../models/ICredentials.ts';
 import {IAuthorizeResult, IRefreshAction} from '../models/IRefreshResult.ts';
+import {IDeviceResponse} from '../models/IDeviceResponse.ts';
 import {isInternetReachable} from '../reducers';
 
 function* register({payload}: PayloadAction<ICredentials>) {
@@ -53,6 +57,7 @@ function* register({payload}: PayloadAction<ICredentials>) {
                 type: AUTHORIZE_SUCCESS,
                 payload: {...stringify},
             });
+            yield put({type: GET_DEVICE_REQUEST});
         } catch (error: any) {
             console.log(error);
             yield put({
@@ -104,6 +109,7 @@ function* refreshToken({payload}: PayloadAction<IRefreshAction>) {
             type: payload.type,
             payload: payload.payload,
         });
+        yield put({type: GET_DEVICE_REQUEST});
     } catch (error: any) {
         console.log(error);
         yield put({
@@ -111,6 +117,27 @@ function* refreshToken({payload}: PayloadAction<IRefreshAction>) {
             payload: {...error},
         });
         yield put({type: LOGOUT_USER});
+    }
+}
+
+function* getDevice() {
+    yield put({type: SHOW_LOADING_INDICATOR});
+    try {
+        // @ts-ignore
+        const device: any = yield call(deviceApi);
+        const response = device.data as IDeviceResponse;
+        yield put({
+            type: GET_DEVICE_SUCCESS,
+            payload: {...response},
+        });
+    } catch (error: any) {
+        console.log(error);
+        yield put({
+            type: GET_DEVICE_FAILURE,
+            payload: {...error},
+        });
+    } finally {
+        yield put({type: HIDE_LOADING_INDICATOR});
     }
 }
 
@@ -152,6 +179,7 @@ function* logout() {
 export default function* authorizeFlow() {
     yield takeLeading(AUTHORIZE_REQUEST, register);
     yield takeLeading(REFRESH_TOKEN_REQUEST, refreshToken);
+    yield takeLeading(GET_DEVICE_REQUEST, getDevice);
     yield takeLeading(REVOKE_TOKEN_REQUEST, revokeToken);
-    yield takeEvery(LOGOUT_USER, logout);
+    yield takeLeading(LOGOUT_USER, logout);
 }

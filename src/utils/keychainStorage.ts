@@ -10,8 +10,10 @@ export const getTokenFromKeychain = async (key: KEYCHAIN_TOKEN_KEY) => {
             return parsedValues != null ? parsedValues[key] : null;
         } else {
             console.log('No tokens stored');
+            return null;
         }
     } catch (error) {
         console.log(`Error getting ${key} from Keychain`, error);
+        return null;
     }
 };

@@ -1,5 +1,5 @@
 import moment from 'moment/moment';
-import {createReducer} from '@reduxjs/toolkit';
+import {createReducer, isAnyOf} from '@reduxjs/toolkit';
 import {lastPaymentSuccessResponse, renewLicenseSuccessResponse} from '../actions/homeActions.ts';
 import {ICreateLicenseResponse, LastLicenseModel} from '../models/ICreateLicenseModel.ts';
 
@@ -13,10 +13,12 @@ const initialState: IHomeState = {
 };
 const homeReducer = createReducer(initialState, (builder) => {
     builder
-        .addCase(lastPaymentSuccessResponse, (state, action) => {
-            state.lastPayment = action.payload;
-        })
-        .addCase(renewLicenseSuccessResponse, (state, action) => {
+        .addMatcher(
+            isAnyOf(
+                lastPaymentSuccessResponse,
+                renewLicenseSuccessResponse
+            ),
+            (state, action) => {
             state.lastPayment = action.payload;
         });
     },

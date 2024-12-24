@@ -2,11 +2,12 @@ import React, {useEffect, useRef} from 'react';
 import type {PropsWithChildren} from 'react';
 import {View, AppState, Appearance} from 'react-native';
 import {ActivityIndicator, Portal} from 'react-native-paper';
-import NetInfo, {NetInfoState} from '@react-native-community/netinfo';
+import NetInfo from '@react-native-community/netinfo';
 import ActionCreators from '../../actions';
 import {TRootState} from '../../boot/configureStore';
 import {useAppDispatch, useAppSelector} from '../../boot/hooks';
 import styles from './styles';
+import {INetInfo, NetInfoClass} from '../../models/netInfoModel.ts';
 /*
 Non-UI Component!!!
  */
@@ -39,12 +40,13 @@ const AppServiceWrapper = ({
     }, [dispatch]);
 
     useEffect(() => {
-        let netInfo: NetInfoState = netInfoState;
+        let netInfo: INetInfo = netInfoState;
         const unsubscribe = NetInfo.addEventListener(state => {
-            if (JSON.stringify(state) !== JSON.stringify(netInfo)) {
-                netInfo = state;
+            const newNetInfoState = new NetInfoClass(state.details, state.isConnected!, state.isInternetReachable, state.type);
+            if (JSON.stringify(newNetInfoState) !== JSON.stringify(netInfo)) {
+                netInfo = newNetInfoState;
                 // Dispatch your actions here based on the netInfo state
-                dispatch(ActionCreators.connectionHasBeenChanged(state));
+                dispatch(ActionCreators.connectionHasBeenChanged(newNetInfoState));
             }
         });
         // Clean up the subscription when the component unmounts

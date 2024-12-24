@@ -1,4 +1,6 @@
+import {Platform} from 'react-native';
 import axios, {AxiosResponse} from 'axios';
+import DeviceInfo from 'react-native-device-info';
 import {
     SERVER_URL,
     LOGIN_API,
@@ -6,10 +8,14 @@ import {
     LICENSE_API,
     GET_LAST_PAYMENT_API,
     DEFAULT_TIME_OUT,
+    DEVICE_API,
+    REAL_SCREEN_WIDTH,
+    REAL_SCREEN_HEIGHT,
 } from '../config';
 import {getTokenFromKeychain} from '../utils/keychainStorage';
 import {KEYCHAIN_TOKEN_KEY} from '../models/keychainStorage';
 import {ICreateLicenseModel} from '../models/ICreateLicenseModel.ts';
+import {CreateDeviceModel} from '../models/ICreateDeviceModel.ts';
 
 const createApiInstance = (baseURL: string) => {
 
@@ -22,7 +28,6 @@ const createApiInstance = (baseURL: string) => {
 
     instance.interceptors.request.use(async req => {
         const accessToken = await getTokenFromKeychain(KEYCHAIN_TOKEN_KEY.accessToken);
-        const refreshToken = await getTokenFromKeychain(KEYCHAIN_TOKEN_KEY.refreshToken);
         if (req.headers) {
             req.headers['Content-Type'] = 'application/json';
             if (baseURL.endsWith(LOGIN_API)) {
@@ -30,9 +35,48 @@ const createApiInstance = (baseURL: string) => {
                     req.headers.Authorization = `Basic ${accessToken}`;
                 }
             } else {
+                const refreshToken = await getTokenFromKeychain(KEYCHAIN_TOKEN_KEY.refreshToken);
                 if (refreshToken) {
                     req.headers.Authorization = `Bearer ${refreshToken}`;
                 }
+            }
+            if (baseURL.endsWith(DEVICE_API)) {
+                const idiom = DeviceInfo.isTablet() ? 'Tablet' : 'Phone';
+                const name = await DeviceInfo.getDeviceName();
+                const model = DeviceInfo.getModel();
+                const versionString = DeviceInfo.getSystemName() + '(' + DeviceInfo.getSystemVersion() + ')';
+                const versionName = DeviceInfo.getVersion();
+                const versionCode = DeviceInfo.getBuildNumber();
+                const bundleId = DeviceInfo.getBundleId();
+                const deviceType = await DeviceInfo.isEmulator() ? 'Virtual' : 'Physical';
+                const manufacturer = await DeviceInfo.getManufacturer();
+                const description = DeviceInfo.getBundleId();
+                const wlanMac = await DeviceInfo.getMacAddress();
+                const uniqueId = await DeviceInfo.getUniqueId();
+                const device = new CreateDeviceModel(
+                    idiom,
+                    name,
+                    model,
+                    versionString,
+                    versionName,
+                    versionCode,
+                    bundleId,
+                    Platform.OS,
+                    deviceType,
+                    manufacturer,
+                    description,
+                    REAL_SCREEN_WIDTH,
+                    REAL_SCREEN_HEIGHT,
+                    '',
+                    '',
+                    '',
+                    '',
+                    wlanMac,
+                    uniqueId);
+                Object.getOwnPropertyNames(device).forEach((value) => {
+                    // @ts-ignore
+                    req.headers[`${value}`] = `${device[value]}`;
+                });
             }
         }
         // Set the cancel token for the request
@@ -87,5 +131,6 @@ const createLicenceApi = (license: ICreateLicenseModel) => {
     return licenseApi.post('', {...license});
 };
 const lastPaymentApi = createApiInstance(SERVER_URL + GET_LAST_PAYMENT_API);
+const deviceApi = createApiInstance(SERVER_URL + DEVICE_API);
 
-export {loginApi, logoutApi, createLicenceApi, lastPaymentApi};
+export {loginApi, logoutApi, createLicenceApi, lastPaymentApi, deviceApi};
