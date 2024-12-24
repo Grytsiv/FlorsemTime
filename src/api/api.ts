@@ -50,8 +50,9 @@ const createApiInstance = (baseURL: string) => {
                 const bundleId = DeviceInfo.getBundleId();
                 const deviceType = await DeviceInfo.isEmulator() ? 'Virtual' : 'Physical';
                 const manufacturer = await DeviceInfo.getManufacturer();
-                const description = DeviceInfo.getBundleId();
-                const wlanMac = await DeviceInfo.getMacAddress();
+                const description = await DeviceInfo.getUserAgent();
+                const computerName = await DeviceInfo.getHost();
+                const wlanMac = await DeviceInfo.getSerialNumber();
                 const uniqueId = await DeviceInfo.getUniqueId();
                 const device = new CreateDeviceModel(
                     idiom,
@@ -67,7 +68,7 @@ const createApiInstance = (baseURL: string) => {
                     description,
                     REAL_SCREEN_WIDTH,
                     REAL_SCREEN_HEIGHT,
-                    '',
+                    computerName,
                     '',
                     '',
                     '',

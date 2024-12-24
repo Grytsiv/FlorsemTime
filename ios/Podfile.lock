@@ -1501,6 +1501,8 @@ PODS:
     - React-logger (= 0.75.3)
     - React-perflogger (= 0.75.3)
     - React-utils (= 0.75.3)
+  - RNDeviceInfo (14.0.1):
+    - React-Core
   - RNGestureHandler (2.20.0):
     - DoubleConversion
     - glog
@@ -1720,6 +1722,7 @@ DEPENDENCIES:
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCodegen (from `build/generated/ios`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNKeychain (from `../node_modules/react-native-keychain`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
@@ -1859,6 +1862,8 @@ EXTERNAL SOURCES:
     :path: build/generated/ios
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
+  RNDeviceInfo:
+    :path: "../node_modules/react-native-device-info"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNKeychain:
@@ -1936,6 +1941,7 @@ SPEC CHECKSUMS:
   React-utils: f2afa6acd905ca2ce7bb8ffb4a22f7f8a12534e8
   ReactCodegen: ff95a93d5ab5d9b2551571886271478eaa168565
   ReactCommon: 289214026502e6a93484f4a46bcc0efa4f3f2864
+  RNDeviceInfo: 825f0d2f4381327317f12d1522720a8f76e6a19e
   RNGestureHandler: 6dfe7692a191ee224748964127114edf057a1475
   RNKeychain: 18fc2d8f29dd957ccfc2989d9389f7d5888169f3
   RNReanimated: 625f9e7f53cba61d7b3436e8e6e209d1dd4e6e9b

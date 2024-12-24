@@ -46,6 +46,23 @@ npm run ios
 
 # OR using Yarn
 yarn ios
+
+# !!!!!FOR RELEASE iOS version build on M1 machine RUN this line to reinstall pods!!!!!!
+
+PRODUCTION=1 arch -x86_64 pod install
+
+# FROM XCode 15.3 -> https://retyui.medium.com/speed-up-ios-builds-by-turning-off-flipper-on-ci-complete-react-native-guide-6846d8433d86
+# The issue described here: https://github.com/facebook/react-native/issues/43335#issuecomment-1991054868
+NO_FLIPPER=1 arch -x86_64 pod install
+
+# Generate iOS Release app using Yarn
+yarn ios --mode Release
+
+# Using Gemfile -> https://guides.cocoapods.org/using/a-gemfile.html:
+bundle install
+
+# Return to Debug version:
+pod install --repo-update
 ```
 
 If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
