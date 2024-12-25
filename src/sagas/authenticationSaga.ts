@@ -22,6 +22,7 @@ import {
     GET_USERS_ME_SUCCESS,
 } from '../actions/types';
 import * as Keychain from 'react-native-keychain';
+import * as Sentry from '@sentry/react-native';
 import {getTokenFromKeychain} from '../utils/keychainStorage.ts';
 import {KEYCHAIN_TOKEN_KEY} from '../models/keychainStorage.ts';
 import {deviceApi, loginApi, logoutApi} from '../api/api.ts';
@@ -59,6 +60,7 @@ function* register({payload}: PayloadAction<ICredentials>) {
             });
             yield put({type: GET_DEVICE_REQUEST});
         } catch (error: any) {
+            Sentry.captureException(error);
             console.log(error);
             yield put({
                 type: AUTHORIZE_FAILURE,
@@ -111,6 +113,7 @@ function* refreshToken({payload}: PayloadAction<IRefreshAction>) {
         });
         yield put({type: GET_DEVICE_REQUEST});
     } catch (error: any) {
+        Sentry.captureException(error);
         console.log(error);
         yield put({
             type: REFRESH_TOKEN_FAILURE,
@@ -131,6 +134,7 @@ function* getDevice() {
             payload: {...response},
         });
     } catch (error: any) {
+        Sentry.captureException(error);
         console.log(error);
         yield put({
             type: GET_DEVICE_FAILURE,

@@ -1,5 +1,6 @@
 import {put, call, select, delay, takeLeading} from 'redux-saga/effects';
 import {PayloadAction} from '@reduxjs/toolkit';
+import * as Sentry from '@sentry/react-native';
 import {
     SHOW_LOADING_INDICATOR,
     HIDE_LOADING_INDICATOR,
@@ -51,6 +52,8 @@ function* getUserInfo() {
             });
             return;
         }
+        console.log(error);
+        Sentry.captureException(error);
         yield put({
             type: GET_USERS_ME_FAILURE,
             payload: {...error},
@@ -89,6 +92,8 @@ function* getLastPayment() {
             });
             return;
         }
+        console.log(error);
+        Sentry.captureException(error);
         yield put({
             type: GET_LAST_PAYMENT_FAILURE,
             payload: {...error},
@@ -120,7 +125,6 @@ function* renewLicense({payload, type}: PayloadAction<ICreateLicenseModel>) {
                 payload: {...response},
             });
         } catch (error: any) {
-            console.log(error);
             if (error.status === 401) {
                 //Refresh Token, and then call this request again
                 yield put({
@@ -129,6 +133,8 @@ function* renewLicense({payload, type}: PayloadAction<ICreateLicenseModel>) {
                 });
                 return;
             }
+            console.log(error);
+            Sentry.captureException(error);
             yield put({
                 type: RENEW_LICENSE_FAILURE,
                 payload: {...error},

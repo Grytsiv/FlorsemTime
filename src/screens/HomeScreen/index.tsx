@@ -8,6 +8,7 @@ import {TRootState} from '../../boot/configureStore.ts';
 import {CreateLicenseModel} from '../../models/ICreateLicenseModel.ts';
 import {RefreshAction} from '../../models/IRefreshResult.ts';
 import {useAppDispatch, useAppSelector} from '../../boot/hooks';
+import * as Sentry from '@sentry/react-native';
 import ActionCreators from '../../actions';
 import styles from './styles';
 
@@ -71,6 +72,12 @@ const HomeScreen: React.FC = () => {
                     dispatch(ActionCreators.handleRenewLicense(newLicense));
                 }}>
                 {t('homeScreen.renewLicenseText', {days: days.toString()})}
+            </Button>
+            <Button
+                style={styles.button}
+                mode="outlined"
+                onPress={() => Sentry.captureException(new Error('First error'))}>
+                {t('homeScreen.sentryButton')}
             </Button>
             <Button
                 style={styles.bottomButton}

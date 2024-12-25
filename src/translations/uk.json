@@ -14,6 +14,7 @@
     "lastPaymentId" : "ID крайньої оплати: {{lastPaymentId}}",
     "arrivalDate" : "License date",
     "logoutButton" : "Вийти",
+    "sentryButton" : "Тестувати Sentry",
     "renewLicenseText" : "Продовжити ліцензію на наступних {{days}} днів",
     "refreshTokenButton" : "Оновити Токен"
   }

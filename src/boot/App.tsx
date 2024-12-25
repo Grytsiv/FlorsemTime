@@ -8,6 +8,8 @@ import AppServiceWrapper from '../components/AppServiceWrapper';
 import configureStore from './configureStore';
 import NavigationCustomContainer from '../navigation/NavigationCustomContainer';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+import * as Sentry from '@sentry/react-native';
+import {SENTRY_DSN} from '../config';
 import {
   CombinedDarkTheme,
   CombinedDefaultTheme,
@@ -15,6 +17,11 @@ import {
   PaperThemeDefault,
 } from '../theme/theme-config';
 import '../i18n';
+
+Sentry.init({
+  dsn: SENTRY_DSN,
+  tracesSampleRate: 1.0,
+});
 
 const App: React.FC = () => {
   const initializedStore = configureStore();
@@ -36,4 +43,5 @@ const App: React.FC = () => {
       </SafeAreaProvider>
   );
 };
-export default App;
+
+export default Sentry.wrap(App);

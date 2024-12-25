@@ -14,6 +14,7 @@
     "lastPaymentId" : "Last Payment ID: {{lastPaymentId}}",
     "arrivalDate" : "License date",
     "logoutButton" : "Logout",
+    "sentryButton" : "Test Sentry",
     "renewLicenseText" : "Renew license for next {{days}} days",
     "refreshTokenButton" : "Refresh Token"
   }

@@ -18,3 +18,4 @@ export const LOGOUT_API: string = '/api/users/logout';
 export const LICENSE_API: string = '/api/payments/createlicence';
 export const GET_LAST_PAYMENT_API: string = '/api/payments/getLastPayment';
 export const DEVICE_API: string = '/api/devices/get';
+export const SENTRY_DSN: string = 'https://536081d2ce8a132df497ab3462553191@o4508523330076672.ingest.de.sentry.io/4508523344298064';
