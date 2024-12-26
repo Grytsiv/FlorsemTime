@@ -35,7 +35,7 @@ const HomeScreen: React.FC = () => {
 
     const now = new Date();
     const days = Math.floor(moment.duration(licenseDateInput.valueOf() - now.valueOf()).asDays());
-    const startDate = new Date(moment(now).toDate()); //today
+    const startDate = new Date(moment(now).add(1, 'day').toDate()); //today +1 day
     const endDate = new Date(moment(now).add(1, 'year').toDate()); //+ 1 year
     const validDate = new Date(moment(lastPayment.StartDate).add(lastPayment.Period, 'days').toDate());
     const validDays = Math.floor(moment.duration(validDate.valueOf() - now.valueOf()).asDays());
@@ -68,7 +68,6 @@ const HomeScreen: React.FC = () => {
                 mode="outlined"
                 onPress={() => {
                     const newLicense = new CreateLicenseModel(days);
-                    console.log('Press:', newLicense);
                     dispatch(ActionCreators.handleRenewLicense(newLicense));
                 }}>
                 {t('homeScreen.renewLicenseText', {days: days.toString()})}
