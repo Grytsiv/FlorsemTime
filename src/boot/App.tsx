@@ -9,7 +9,7 @@ import configureStore from './configureStore';
 import NavigationCustomContainer from '../navigation/NavigationCustomContainer';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import * as Sentry from '@sentry/react-native';
-import {SENTRY_DSN} from '../config';
+import {SENTRY_DSN, SERVER_URL} from '../config';
 import {
   CombinedDarkTheme,
   CombinedDefaultTheme,
@@ -22,6 +22,7 @@ Sentry.init({
   dsn: SENTRY_DSN,
   tracesSampleRate: 1.0,
 });
+Sentry.setTag('environment.api.url', SERVER_URL);
 
 const App: React.FC = () => {
   const initializedStore = configureStore();
