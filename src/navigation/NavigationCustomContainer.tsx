@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {Animated, StatusBar} from 'react-native';
+import {Animated, Platform, StatusBar} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import LoginScreen from '../screens/LoginScreen';
@@ -67,7 +67,7 @@ const NavigationCustomContainer: React.FC<IProps> = (props: IProps) => {
             const checkKeychain = async () => {
                 try {
                     // Retrieve the credentials
-                    const credentials = await Keychain.getGenericPassword();
+                    const credentials = await Keychain.getGenericPassword({storage: Platform.OS === 'ios' ? Keychain.STORAGE_TYPE.KC : Keychain.STORAGE_TYPE.FB});
                     if (credentials) {
                         const parsedValues = JSON.parse(
                             credentials.password,

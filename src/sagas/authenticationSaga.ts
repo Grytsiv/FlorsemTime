@@ -1,3 +1,4 @@
+import {Platform} from 'react-native';
 import {put, call, takeLeading, select} from 'redux-saga/effects';
 import {Buffer} from 'buffer';
 import {PayloadAction} from '@reduxjs/toolkit';
@@ -44,7 +45,7 @@ function* register({payload}: PayloadAction<ICredentials>) {
                 accessToken: token,
                 refreshToken: '',
             };
-            yield call([Keychain, Keychain.setGenericPassword], username, JSON.stringify(stringify));
+            yield call([Keychain, Keychain.setGenericPassword], username, JSON.stringify(stringify), {storage: Platform.OS === 'ios' ? Keychain.STORAGE_TYPE.KC : Keychain.STORAGE_TYPE.FB});
             // @ts-ignore
             const login: any = yield call(loginApi);
             const response = login.data as ILoginResponse;
@@ -53,10 +54,14 @@ function* register({payload}: PayloadAction<ICredentials>) {
                 accessToken: token,
                 refreshToken: response.Token,
             };
-            yield call([Keychain, Keychain.setGenericPassword], username, JSON.stringify(stringify));
+            yield call([Keychain, Keychain.setGenericPassword], username, JSON.stringify(stringify), {storage: Platform.OS === 'ios' ? Keychain.STORAGE_TYPE.KC : Keychain.STORAGE_TYPE.FB});
             yield put({
                 type: AUTHORIZE_SUCCESS,
                 payload: {...stringify},
+            });
+            yield put({
+                type: GET_USERS_ME_SUCCESS,
+                payload: {...response},
             });
             yield put({type: GET_DEVICE_REQUEST});
         } catch (error: any) {
@@ -83,7 +88,7 @@ function* register({payload}: PayloadAction<ICredentials>) {
 function* refreshToken({payload}: PayloadAction<IRefreshAction>) {
     try {
         // @ts-ignore
-        const credentials = yield call([Keychain, Keychain.getGenericPassword]);
+        const credentials = yield call([Keychain, Keychain.getGenericPassword], {storage: Platform.OS === 'ios' ? Keychain.STORAGE_TYPE.KC : Keychain.STORAGE_TYPE.FB});
         //console.log(credentials);
         // @ts-ignore
         const token = yield call(getTokenFromKeychain, KEYCHAIN_TOKEN_KEY.accessToken);
