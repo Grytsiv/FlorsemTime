@@ -17,5 +17,10 @@
     "sentryButton" : "Test Sentry",
     "renewLicenseText" : "Renew license for next {{days}} days",
     "refreshTokenButton" : "Refresh Token"
+  },
+  "error" : {
+    "error" : "Error",
+    "message" : "Something went wrong, please try again!",
+    "status" : "\n Status:"
   }
 }

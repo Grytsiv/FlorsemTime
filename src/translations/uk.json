@@ -17,5 +17,10 @@
     "sentryButton" : "Тестувати Sentry",
     "renewLicenseText" : "Продовжити ліцензію на наступних {{days}} днів",
     "refreshTokenButton" : "Оновити Токен"
+  },
+  "error" : {
+    "error" : "Помилка",
+    "message" : "Щось пішло не так, спробуйте ще раз!",
+    "status" : "\n Статус:"
   }
 }

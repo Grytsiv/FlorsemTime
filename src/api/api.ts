@@ -16,6 +16,7 @@ import {getTokenFromKeychain} from '../utils/keychainStorage';
 import {KEYCHAIN_TOKEN_KEY} from '../models/keychainStorage';
 import {ICreateLicenseModel} from '../models/ICreateLicenseModel.ts';
 import {CreateDeviceModel} from '../models/ICreateDeviceModel.ts';
+import i18n from '../i18n.ts';
 
 const createApiInstance = (baseURL: string) => {
 
@@ -97,8 +98,9 @@ const createApiInstance = (baseURL: string) => {
     // => The errors given by server will not be always consistent, so we
     //    could sanitize the response and return proper error to the client.
     const responseErrorHandler = async (error: any) => {
-        let errors = ['Something went wrong, please try again!'];
-        let message = ['Something went wrong, please try again!'];
+        let errors = [i18n.t('error.message')];
+        let message = [i18n.t('error.message')];
+        let status = 0;
         if (error.response) {
             if (error.response.data.errors) {
                 errors = error.response.data.errors;
@@ -109,13 +111,17 @@ const createApiInstance = (baseURL: string) => {
             if (error.response.data.message) {
                 message = error.response.data.message;
             }
+            if (error.response.status) {
+                status = error.response.status;
+            }
         } else if (error.request) {
             console.log(error.request);
         } else {
             console.log('Error', error.message);
         }
+
         return Promise.reject({
-            status: error.response.status,
+            status: status,
             errors: errors,
             message: message,
         });
