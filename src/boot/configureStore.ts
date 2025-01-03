@@ -21,6 +21,6 @@ const store = () => {
     sagaMiddleware.run(rootSaga);
     return toolkitStore;
 };
-export type TAppDispatch = ReturnType<typeof configureStore>['dispatch'];
+export type TAppDispatch = ReturnType<typeof store>['dispatch'];
 export type TRootState = ReturnType<typeof rootReducer>;
 export default store;

@@ -1,5 +1,6 @@
 import {createReducer} from '@reduxjs/toolkit';
 import {authorizationSuccess, refreshTokenSuccess, userAlreadyAuthorized} from '../actions/authenticationActions.ts';
+import {logoutUser} from '../actions/appServiceActions.ts';
 
 interface IAuthenticationState {
     accessToken: string;
@@ -21,6 +22,10 @@ const authenticationReducer = createReducer(initialState, (builder) => {
         })
         .addCase(refreshTokenSuccess,(state, action) => {
             state.refreshToken = action.payload.refreshToken;
+        })
+        .addCase(logoutUser, (state) => {
+            state.accessToken = '';
+            state.refreshToken = '';
         });
     }
 );
