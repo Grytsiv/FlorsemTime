@@ -27,17 +27,23 @@ const createApiInstance = (baseURL: string) => {
     let cancelTokenSource = axios.CancelToken.source();
 
     instance.interceptors.request.use(async req => {
+        // Set the cancel token for the request
+        req.cancelToken = cancelTokenSource.token;
         const accessToken = await getTokenFromKeychain(KEYCHAIN_TOKEN_KEY.accessToken);
         if (req.headers) {
             req.headers['Content-Type'] = 'application/json';
             if (baseURL.endsWith(LOGIN_API)) {
                 if (accessToken) {
                     req.headers.Authorization = `Basic ${accessToken}`;
+                } else {
+                    cancelTokenSource.cancel('Request canceled due to lack of access token');
                 }
             } else {
                 const refreshToken = await getTokenFromKeychain(KEYCHAIN_TOKEN_KEY.refreshToken);
                 if (refreshToken) {
                     req.headers.Authorization = `Bearer ${refreshToken}`;
+                } else {
+                    cancelTokenSource.cancel('Request canceled due to lack of refresh token');
                 }
             }
             if (baseURL.endsWith(DEVICE_API)) {
@@ -80,8 +86,6 @@ const createApiInstance = (baseURL: string) => {
                 });
             }
         }
-        // Set the cancel token for the request
-        req.cancelToken = cancelTokenSource.token;
         return req;
     });
 
