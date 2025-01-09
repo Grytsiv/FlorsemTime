@@ -22,7 +22,7 @@ Sentry.init({
   dsn: SENTRY_DSN,
   tracesSampleRate: 1.0,
 });
-Sentry.setTag('environment.api.url', SERVER_URL);
+Sentry.setTag('environment.base_url', SERVER_URL);
 
 const App: React.FC = () => {
   const initializedStore = configureStore();
