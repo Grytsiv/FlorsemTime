@@ -18,11 +18,19 @@ import {ICreateLicenseModel} from '../models/ICreateLicenseModel.ts';
 import {CreateDeviceModel} from '../models/ICreateDeviceModel.ts';
 import i18n from '../i18n.ts';
 
+function newAbortSignal(timeout: number) {
+    const abortController = new AbortController();
+    setTimeout(() => abortController.abort(), timeout || 0);
+
+    return abortController.signal;
+}
+
 const createApiInstance = (baseURL: string) => {
 
     const instance = axios.create({
-        baseURL,
+        signal: newAbortSignal(Number(DEFAULT_TIME_OUT)),
         timeout: Number(DEFAULT_TIME_OUT),
+        baseURL,
     });
 
     let cancelTokenSource = axios.CancelToken.source();
