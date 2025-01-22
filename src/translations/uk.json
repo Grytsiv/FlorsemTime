@@ -5,6 +5,14 @@
     "emailLabel" : "Логін",
     "passwordLabel" : "Пароль"
   },
+  "drawerMenu" : {
+    "role" : "Роль: ",
+    "name" : "Ім'я: ",
+    "surname" : "Прізвище: ",
+    "phone" : "Телефон: ",
+    "email" : "Почта: ",
+    "address" : "Адреса: "
+  },
   "homeScreen" : {
     "title": "Початковий",
     "label" : "Початковий екран скоро тут буде",

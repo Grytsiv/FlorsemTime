@@ -5,6 +5,14 @@
     "emailLabel" : "Login",
     "passwordLabel" : "Password"
   },
+  "drawerMenu" : {
+    "role" : "Role: ",
+    "name" : "Name: ",
+    "surname" : "Surname: ",
+    "phone" : "Phone: ",
+    "email" : "Email: ",
+    "address" : "Address: "
+  },
   "homeScreen" : {
     "title" : "Home",
     "label" : "Home screen will be here soon",
