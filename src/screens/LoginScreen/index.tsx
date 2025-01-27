@@ -30,6 +30,7 @@ const LoginScreen: FC = () => {
         },
         [],
     );
+    const isCredentialsInvalid = credentialsInput.login.length === 0 || credentialsInput.password.length === 0;
     return (
         <View style={styles.container}>
             <TextInput
@@ -39,7 +40,7 @@ const LoginScreen: FC = () => {
                 value={credentialsInput.login}
                 onChangeText={onChangeEmail}
                 mode="outlined"
-                autoCapitalize="characters"
+                autoCapitalize="none"
                 autoCorrect={false}
                 returnKeyType="done"
                 maxLength={40}
@@ -71,7 +72,7 @@ const LoginScreen: FC = () => {
                 style={styles.button}
                 icon="login"
                 mode="outlined"
-                disabled={isBusy}
+                disabled={isBusy || isCredentialsInvalid}
                 onPress={() => dispatch(ActionCreators.handleAuthorize(credentialsInput))}>
                 {t('loginScreen.loginButton')}
             </Button>
