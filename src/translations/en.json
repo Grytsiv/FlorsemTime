@@ -11,7 +11,8 @@
     "surname" : "Surname: ",
     "phone" : "Phone: ",
     "email" : "Email: ",
-    "address" : "Address: "
+    "address" : "Address: ",
+    "version" : "Version: "
   },
   "homeScreen" : {
     "title" : "Home",
@@ -19,12 +20,17 @@
     "licenseValid" : "License valid: {{validDays}} days, To: {{validTo}}",
     "cardNumber" : "Card Number: {{cardNumber}}",
     "cardOwner" : "Card Owner: {{cardOwner}}",
+    "companyId" : "Company ID: {{companyId}}",
+    "forbidden" : "The user {{name}} {{surname}} does not have access to this data",
     "lastPaymentId" : "Last Payment ID: {{lastPaymentId}}",
     "arrivalDate" : "License date",
     "logoutButton" : "Logout",
     "sentryButton" : "Test Sentry",
     "renewLicenseText" : "Renew license for next {{days}} days",
     "refreshTokenButton" : "Refresh Token"
+  },
+  "companyDetailsScreen" : {
+    "title" : "Company Details"
   },
   "error" : {
     "error" : "Error",

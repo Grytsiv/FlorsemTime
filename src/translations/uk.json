@@ -11,7 +11,8 @@
     "surname" : "Прізвище: ",
     "phone" : "Телефон: ",
     "email" : "Почта: ",
-    "address" : "Адреса: "
+    "address" : "Адреса: ",
+    "version" : "Версія: "
   },
   "homeScreen" : {
     "title": "Початковий",
@@ -19,12 +20,17 @@
     "licenseValid" : "Ліцензія дійсна: {{validDays}} днів, до: {{validTo}}",
     "cardNumber" : "Номер Картки: {{cardNumber}}",
     "cardOwner" : "Власник Картки: {{cardOwner}}",
+    "companyId" : "ID підприємства: {{companyId}}",
+    "forbidden" : "Користувач {{name}} {{surname}} немає права доступу до цих даних",
     "lastPaymentId" : "ID крайньої оплати: {{lastPaymentId}}",
     "arrivalDate" : "License date",
     "logoutButton" : "Вийти",
     "sentryButton" : "Тестувати Sentry",
     "renewLicenseText" : "Продовжити ліцензію на наступних {{days}} днів",
     "refreshTokenButton" : "Оновити Токен"
+  },
+  "companyDetailsScreen" : {
+    "title" : "Деталі Підприємства"
   },
   "error" : {
     "error" : "Помилка",

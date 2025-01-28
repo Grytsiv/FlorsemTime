@@ -1,9 +1,10 @@
 import React, {useEffect} from 'react';
-import {Animated, Platform, StatusBar} from 'react-native';
+import {Animated, StatusBar} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import LoginScreen from '../screens/LoginScreen';
 import HomeScreen from '../screens/HomeScreen';
+import CompanyDetailsScreen from '../screens/CompanyDetailsScreen';
 import {navigationRef} from './NavigationService';
 import {NavigationContainer, Theme} from '@react-navigation/native';
 import * as Keychain from 'react-native-keychain';
@@ -13,6 +14,7 @@ import {TRootState} from '../boot/configureStore';
 import {useTranslation} from 'react-i18next';
 import DrawerIcon from '../components/DrawerIcon';
 import DrawerMenu from '../components/DrawerMenu';
+import {KEYCHAIN_STORAGE} from '../config.ts';
 const Stack = createStackNavigator();
 const AuthStack = createStackNavigator();
 
@@ -59,6 +61,7 @@ const LoggedInNavigator = () => {
 const NavigationCustomContainer: React.FC<IProps> = (props: IProps) => {
     const {theme} = props;
     const dispatch = useAppDispatch();
+    const {t} = useTranslation();
     const isRegisteredState = useAppSelector(
         (state: TRootState) => state.appServiceReducer.isRegistered,
     );
@@ -67,7 +70,7 @@ const NavigationCustomContainer: React.FC<IProps> = (props: IProps) => {
             const checkKeychain = async () => {
                 try {
                     // Retrieve the credentials
-                    const credentials = await Keychain.getGenericPassword({storage: Platform.OS === 'ios' ? Keychain.STORAGE_TYPE.KC : Keychain.STORAGE_TYPE.FB});
+                    const credentials = await Keychain.getGenericPassword({storage: KEYCHAIN_STORAGE});
                     if (credentials) {
                         const parsedValues = JSON.parse(
                             credentials.password,
@@ -104,10 +107,20 @@ const NavigationCustomContainer: React.FC<IProps> = (props: IProps) => {
             <StatusBar barStyle={theme.dark ? 'light-content' : 'dark-content'} />
             <Stack.Navigator screenOptions={{headerShown: false}}>
                 {isRegisteredState ? (
-                    <Stack.Screen
-                        name="LoggedInStackHome"
-                        component={LoggedInNavigator}
-                    />
+                    <Stack.Group>
+                        <Stack.Screen
+                            name="LoggedInStackHome"
+                            component={LoggedInNavigator}
+                        />
+                        <Stack.Screen
+                            options={{
+                                headerShown: true,
+                                title: t('companyDetailsScreen.title'),
+                            }}
+                            name="CompanyDetailsScreen"
+                            component={CompanyDetailsScreen}
+                        />
+                    </Stack.Group>
                 ) : (
                     <Stack.Screen
                         name="AuthStackLogin"

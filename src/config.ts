@@ -1,4 +1,7 @@
-import {Dimensions, PixelRatio} from 'react-native';
+import {Dimensions, PixelRatio, Platform} from 'react-native';
+import * as Keychain from 'react-native-keychain';
+import {STORAGE_TYPE} from 'react-native-keychain';
+
 export const SCREEN_HEIGHT = Dimensions.get('window').height;
 export const SCREEN_WIDTH = Dimensions.get('window').width;
 export const SCREEN_SCALE = Dimensions.get('window').scale;
@@ -17,5 +20,8 @@ export const LOGIN_API: string = '/api/users/login';
 export const LOGOUT_API: string = '/api/users/logout';
 export const LICENSE_API: string = '/api/payments/createlicence';
 export const GET_LAST_PAYMENT_API: string = '/api/payments/getLastPayment';
+export const GET_PAYMENT_LIST_API: string = '/api/payments/getPaymentList';
+export const GET_ALL_COMPANYS_API: string = '/api/companys/getall';
 export const DEVICE_API: string = '/api/devices/get';
 export const SENTRY_DSN: string = 'https://536081d2ce8a132df497ab3462553191@o4508523330076672.ingest.de.sentry.io/4508523344298064';
+export const KEYCHAIN_STORAGE: STORAGE_TYPE = Platform.OS === 'ios' ? Keychain.STORAGE_TYPE.KC : Keychain.STORAGE_TYPE.FB;

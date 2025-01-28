@@ -11,6 +11,7 @@ export interface ILoginResponse {
     RoleName: string;
     StatusId: number;
     StatusName: string;
+    StatusDescription: string|null;
     Bookkeeper: number;
     SupervisorId: number;
     CreatedBy: number;
@@ -18,6 +19,8 @@ export interface ILoginResponse {
     CreatedDate: string;
     ModifiedDate: string;
     LastActivityTime: string;
+    NFCHash: string;
+    CompanyId: number;
     Token: string;
 }
 export class User implements ILoginResponse {
@@ -33,6 +36,7 @@ export class User implements ILoginResponse {
     RoleName: string;
     StatusId: number;
     StatusName: string;
+    StatusDescription: string|null;
     Bookkeeper: number;
     SupervisorId: number;
     CreatedBy: number;
@@ -40,6 +44,8 @@ export class User implements ILoginResponse {
     CreatedDate: string;
     ModifiedDate: string;
     LastActivityTime: string;
+    NFCHash: string;
+    CompanyId: number;
     Token: string;
     constructor(
         Id: number = -1,
@@ -54,6 +60,7 @@ export class User implements ILoginResponse {
         RoleName: string = '',
         StatusId: number = -1,
         StatusName: string = '',
+        StatusDescription: string|null = null,
         Bookkeeper: number = -1,
         SupervisorId: number = -1,
         CreatedBy: number = -1,
@@ -61,6 +68,8 @@ export class User implements ILoginResponse {
         CreatedDate: string = '',
         ModifiedDate: string = '',
         LastActivityTime: string = '',
+        NFCHash: string = '',
+        CompanyId: number = -1,
         Token: string = '',
     ) {
         this.Id = Id;
@@ -75,6 +84,7 @@ export class User implements ILoginResponse {
         this.RoleName = RoleName;
         this.StatusId = StatusId;
         this.StatusName = StatusName;
+        this.StatusDescription = StatusDescription;
         this.Bookkeeper = Bookkeeper;
         this.SupervisorId = SupervisorId;
         this.CreatedBy = CreatedBy;
@@ -82,6 +92,8 @@ export class User implements ILoginResponse {
         this.CreatedDate = CreatedDate;
         this.ModifiedDate = ModifiedDate;
         this.LastActivityTime = LastActivityTime;
+        this.NFCHash = NFCHash;
+        this.CompanyId = CompanyId;
         this.Token = Token;
     }
 }

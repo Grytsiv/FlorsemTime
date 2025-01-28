@@ -11,4 +11,5 @@ export default {
     edward: '#A4A8A9',
     athensGray: '#F3F3F5',
     corn: '#E1B506',
+    guardsmanRed: '#CC0000',
 };

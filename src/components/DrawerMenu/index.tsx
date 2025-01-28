@@ -1,11 +1,15 @@
 import React from 'react';
+import {View} from 'react-native';
 import {
     DrawerContentComponentProps,
     DrawerContentScrollView,
     DrawerItemList,
 } from '@react-navigation/drawer';
 import {Avatar, Button, Divider, Text} from 'react-native-paper';
+import DeviceInfo from 'react-native-device-info';
 import {useTranslation} from 'react-i18next';
+import * as Sentry from '@sentry/react-native';
+import {RefreshAction} from '../../models/IRefreshResult.ts';
 import {useAppDispatch, useAppSelector} from '../../boot/hooks';
 import {TRootState} from '../../boot/configureStore';
 import ActionCreators from '../../actions';
@@ -21,6 +25,8 @@ const DrawerMenu: React.FC<DrawerContentComponentProps> = props => {
     const avatarLabel = userState
         ? userState.Name?.substring(0, 1) + userState.Surname?.substring(0, 1)
         : '';
+    const appVersion = `${DeviceInfo.getVersion()} (${DeviceInfo.getBuildNumber()})`;
+
     return (
         <DrawerContentScrollView {...props}>
             {userState ? <Divider /> : null}
@@ -44,6 +50,26 @@ const DrawerMenu: React.FC<DrawerContentComponentProps> = props => {
                 {t('homeScreen.logoutButton')}
             </Button>
             <Divider />
+            <View style={styles.button}/>
+            <Divider />
+            <Button
+                style={styles.logOutButton}
+                mode="outlined"
+                onPress={() => Sentry.captureException(new Error('First error'))}>
+                {t('homeScreen.sentryButton')}
+            </Button>
+            <View style={styles.buttonBetween}/>
+            <Button
+                style={styles.logOutButton}
+                mode="outlined"
+                onPress={() => dispatch(ActionCreators.handleRefresh(new RefreshAction()))}>
+                {t('homeScreen.refreshTokenButton')}
+            </Button>
+            <Divider />
+            <Text style={styles.versionText}>
+                {t('drawerMenu.version')}
+                {appVersion}
+            </Text>
         </DrawerContentScrollView>
     );
 };

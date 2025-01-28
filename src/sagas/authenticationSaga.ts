@@ -1,27 +1,6 @@
-import {Platform} from 'react-native';
 import {put, call, takeLeading, select} from 'redux-saga/effects';
 import {Buffer} from 'buffer';
 import {PayloadAction} from '@reduxjs/toolkit';
-import {
-    AUTHORIZATION_STATE_CHANGED,
-    NONE_INTERNET_CONNECTION,
-    SHOW_LOADING_INDICATOR,
-    HIDE_LOADING_INDICATOR,
-    AUTHORIZE_REQUEST,
-    AUTHORIZE_SUCCESS,
-    AUTHORIZE_FAILURE,
-    REFRESH_TOKEN_REQUEST,
-    REFRESH_TOKEN_SUCCESS,
-    REFRESH_TOKEN_FAILURE,
-    GET_DEVICE_REQUEST,
-    GET_DEVICE_SUCCESS,
-    GET_DEVICE_FAILURE,
-    REVOKE_TOKEN_REQUEST,
-    REVOKE_TOKEN_SUCCESS,
-    REVOKE_TOKEN_FAILURE,
-    LOGOUT_USER,
-    GET_USERS_ME_SUCCESS,
-} from '../actions/types';
 import * as Keychain from 'react-native-keychain';
 import * as Sentry from '@sentry/react-native';
 import {getTokenFromKeychain} from '../utils/keychainStorage.ts';
@@ -32,12 +11,38 @@ import {ICredentials} from '../models/ICredentials.ts';
 import {IAuthorizeResult, IRefreshAction} from '../models/IRefreshResult.ts';
 import {IDeviceResponse} from '../models/IDeviceResponse.ts';
 import {isInternetReachable} from '../reducers';
+import {KEYCHAIN_STORAGE} from '../config.ts';
+import {TRootState} from '../boot/configureStore.ts';
+import {getUserSuccess} from '../actions/profileActions.ts';
+import {
+    authStateChanged,
+    showLoadingIndicator,
+    hideLoadingIndicator,
+    noneInternetConnection,
+    logoutUser,
+} from '../actions/appServiceActions.ts';
+import {
+    handleAuthorize,
+    authorizationSuccess,
+    authorizationFailure,
+    handleDevice,
+    deviceSuccess,
+    deviceFailure,
+    handleRefresh,
+    refreshTokenSuccess,
+    refreshTokenFailure,
+    handleRevoke,
+    revokeTokenSuccess,
+    revokeTokenFailure,
+} from '../actions/authenticationActions.ts';
+import {Errors} from '../models/IErrorModel.ts';
+import {handleLastPayment, handlePaymentList} from '../actions/homeActions.ts';
 
 function* register({payload}: PayloadAction<ICredentials>) {
     const isInternet: boolean | null = yield select(isInternetReachable);
     if (isInternet) {
         // show a loader
-        yield put({type: SHOW_LOADING_INDICATOR});
+        yield put(showLoadingIndicator());
         try {
             const token = Buffer.from(`${payload.login}:${payload.password}`).toString('base64');
             const username: string = payload.login;
@@ -45,108 +50,94 @@ function* register({payload}: PayloadAction<ICredentials>) {
                 accessToken: token,
                 refreshToken: '',
             };
-            yield call([Keychain, Keychain.setGenericPassword], username, JSON.stringify(stringify), {storage: Platform.OS === 'ios' ? Keychain.STORAGE_TYPE.KC : Keychain.STORAGE_TYPE.FB});
+            yield call([Keychain, Keychain.setGenericPassword], username, JSON.stringify(stringify), {storage: KEYCHAIN_STORAGE});
             // @ts-ignore
             const login: any = yield call(loginApi);
-            const response = login.data as ILoginResponse;
-            //console.log('response', response.Token);
-            stringify = {
-                accessToken: token,
-                refreshToken: response.Token,
-            };
-            yield call([Keychain, Keychain.setGenericPassword], username, JSON.stringify(stringify), {storage: Platform.OS === 'ios' ? Keychain.STORAGE_TYPE.KC : Keychain.STORAGE_TYPE.FB});
-            yield put({
-                type: AUTHORIZE_SUCCESS,
-                payload: {...stringify},
-            });
-            yield put({
-                type: GET_USERS_ME_SUCCESS,
-                payload: {...response},
-            });
-            yield put({type: GET_DEVICE_REQUEST});
+            if (login.status === 200) {
+                const response = login.data as ILoginResponse;
+                stringify = {
+                    accessToken: token,
+                    refreshToken: response.Token,
+                };
+                yield call([Keychain, Keychain.setGenericPassword], username, JSON.stringify(stringify), {storage: KEYCHAIN_STORAGE});
+                yield put(authorizationSuccess(stringify));
+                yield put(getUserSuccess(response));
+                yield put(handleDevice());
+            }
         } catch (error: any) {
             Sentry.captureException(error);
             console.log(error);
-            yield put({
-                type: AUTHORIZE_FAILURE,
-                payload: {...error},
-            });
-            yield put({
-                type: AUTHORIZATION_STATE_CHANGED,
-                payload: {
-                    registrationState: false,
-                },
-            });
+            yield put(authStateChanged(false));
+            yield put(authorizationFailure(error));
         } finally {
-            yield put({type: HIDE_LOADING_INDICATOR});
+            yield put(hideLoadingIndicator());
         }
     } else {
-        yield put({type: NONE_INTERNET_CONNECTION});
+        yield put(noneInternetConnection());
     }
 }
 
 function* refreshToken({payload}: PayloadAction<IRefreshAction>) {
     try {
         // @ts-ignore
-        const credentials = yield call([Keychain, Keychain.getGenericPassword], {storage: Platform.OS === 'ios' ? Keychain.STORAGE_TYPE.KC : Keychain.STORAGE_TYPE.FB});
-        //console.log(credentials);
-        // @ts-ignore
-        const token = yield call(getTokenFromKeychain, KEYCHAIN_TOKEN_KEY.accessToken);
-        //console.log('token', token);
-        // @ts-ignore
-        const login: any = yield call(loginApi);
-        const response = login.data as ILoginResponse;
-        const stringify = {
-            accessToken: token,
-            refreshToken: response.Token,
-        };
-        yield call([Keychain, Keychain.setGenericPassword], credentials.username, JSON.stringify(stringify));
-        yield put({
-            type: REFRESH_TOKEN_SUCCESS,
-            payload: {
-                refreshToken: response.Token,
-            },
-        });
-        yield put({
-            type: GET_USERS_ME_SUCCESS,
-            payload: {...response},
-        });
-        //Reload the last call
-        yield put({
-            type: payload.type,
-            payload: payload.payload,
-        });
-        yield put({type: GET_DEVICE_REQUEST});
+        const credentials = yield call([Keychain, Keychain.getGenericPassword], {storage: KEYCHAIN_STORAGE});
+        if (credentials) {
+            // @ts-ignore
+            const token = yield call(getTokenFromKeychain, KEYCHAIN_TOKEN_KEY.accessToken);
+            // @ts-ignore
+            const login: any = yield call(loginApi);
+            if (login.status === 200) {
+                const response = login.data as ILoginResponse;
+                const stringify = {
+                    accessToken: token,
+                    refreshToken: response.Token,
+                };
+                yield call([Keychain, Keychain.setGenericPassword], credentials.username, JSON.stringify(stringify), {storage: KEYCHAIN_STORAGE});
+                yield put(refreshTokenSuccess({refreshToken: response.Token}));
+                yield put(getUserSuccess(response));
+                //Reload the last call
+                yield put({
+                    type: payload.type,
+                    payload: payload.payload,
+                });
+                yield put(handleDevice());
+            }
+        } else {
+            yield put(refreshTokenFailure(new Errors(0, [], [payload.type + '|' + payload.payload])));
+            yield put(logoutUser());
+        }
     } catch (error: any) {
         Sentry.captureException(error);
         console.log(error);
-        yield put({
-            type: REFRESH_TOKEN_FAILURE,
-            payload: {...error},
-        });
-        yield put({type: LOGOUT_USER});
+        yield put(refreshTokenFailure(error));
+        yield put(logoutUser());
     }
 }
 
 function* getDevice() {
-    yield put({type: SHOW_LOADING_INDICATOR});
+    yield put(showLoadingIndicator());
     try {
         // @ts-ignore
         const device: any = yield call(deviceApi);
-        const response = device.data as IDeviceResponse;
-        yield put({
-            type: GET_DEVICE_SUCCESS,
-            payload: {...response},
-        });
+        if (device.status === 200) {
+            const response = device.data as IDeviceResponse;
+            yield put(deviceSuccess(response));
+            const state: TRootState = yield select();
+            //Check User permission
+            if (state.profileReducer.user.RoleId === 1) {
+                //Get Payment List
+                yield put(handlePaymentList());
+            } else if (state.profileReducer.user.RoleId > 1) {
+                //Get Last Payment
+                yield put(handleLastPayment());
+            }
+        }
     } catch (error: any) {
         Sentry.captureException(error);
         console.log(error);
-        yield put({
-            type: GET_DEVICE_FAILURE,
-            payload: {...error},
-        });
+        yield put(deviceFailure(error));
     } finally {
-        yield put({type: HIDE_LOADING_INDICATOR});
+        yield put(hideLoadingIndicator());
     }
 }
 
@@ -154,31 +145,20 @@ function* revokeToken() {
     const isInternet: boolean | null = yield select(isInternetReachable);
     if (isInternet) {
         // show a loader
-        yield put({type: SHOW_LOADING_INDICATOR});
+        yield put(showLoadingIndicator());
         try {
             // @ts-ignore
             yield call(logoutApi);
-            yield put({type: LOGOUT_USER});
-            yield put({type: REVOKE_TOKEN_SUCCESS});
+            yield put(logoutUser());
+            yield put(revokeTokenSuccess());
         } catch (error: any) {
-            if (error.status === 401) {
-                //Refresh Token, and then call this request again
-                yield put({
-                    type: REFRESH_TOKEN_REQUEST,
-                    payload: {type: REVOKE_TOKEN_REQUEST, payload: null},
-                });
-                return;
-            }
             console.log(error);
-            yield put({
-                type: REVOKE_TOKEN_FAILURE,
-                payload: {...error},
-            });
+            yield put(revokeTokenFailure(error));
         } finally {
-            yield put({type: HIDE_LOADING_INDICATOR});
+            yield put(hideLoadingIndicator());
         }
     } else {
-        yield put({type: NONE_INTERNET_CONNECTION});
+        yield put(noneInternetConnection());
     }
 }
 function* logout() {
@@ -186,9 +166,9 @@ function* logout() {
 }
 
 export default function* authorizeFlow() {
-    yield takeLeading(AUTHORIZE_REQUEST, register);
-    yield takeLeading(REFRESH_TOKEN_REQUEST, refreshToken);
-    yield takeLeading(GET_DEVICE_REQUEST, getDevice);
-    yield takeLeading(REVOKE_TOKEN_REQUEST, revokeToken);
-    yield takeLeading(LOGOUT_USER, logout);
+    yield takeLeading(handleAuthorize, register);
+    yield takeLeading(handleRefresh, refreshToken);
+    yield takeLeading(handleDevice, getDevice);
+    yield takeLeading(handleRevoke, revokeToken);
+    yield takeLeading(logoutUser, logout);
 }
