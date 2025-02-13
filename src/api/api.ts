@@ -14,9 +14,6 @@ import {
     GET_PAYMENT_LIST_API,
     GET_ALL_COMPANYS_API,
 } from '../config';
-import {getTokenFromKeychain} from '../utils/keychainStorage';
-import {KEYCHAIN_TOKEN_KEY} from '../models/keychainStorage';
-import {ICreateLicenseModel} from '../models/ICreateLicenseModel.ts';
 import {CreateDeviceModel} from '../models/ICreateDeviceModel.ts';
 import i18n from '../i18n.ts';
 
@@ -44,62 +41,47 @@ const createApiInstance = (baseURL: string) => {
         req.cancelToken = cancelTokenSource.token;
         const uniqueId = await DeviceInfo.getUniqueId();
         if (req.headers) {
+            //console.log('headers: ', req.headers);
             req.headers['Content-Type'] = 'application/json';
             if (baseURL.endsWith(LOGIN_API)) {
-                const accessToken = await getTokenFromKeychain(KEYCHAIN_TOKEN_KEY.accessToken);
-                if (accessToken) {
-                    console.log('api accessToken:', accessToken);
-                    req.headers.Authorization = `Basic ${accessToken}`;
-                    req.headers.uniqueId = uniqueId;
-                } else {
-                    console.error('No accessToken found');
-                    cancelTokenSource.cancel('Request canceled due to lack of access token');
-                }
+                req.headers.uniqueId = uniqueId;
             } else {
-                const refreshToken = await getTokenFromKeychain(KEYCHAIN_TOKEN_KEY.refreshToken);
-                if (refreshToken) {
-                    console.log('api refreshToken:', refreshToken);
-                    req.headers.Authorization = `Bearer ${refreshToken}`;
-                    const idiom = DeviceInfo.isTablet() ? 'Tablet' : 'Phone';
-                    const name = await DeviceInfo.getDeviceName();
-                    const model = DeviceInfo.getModel();
-                    const versionString = DeviceInfo.getSystemName() + '(' + DeviceInfo.getSystemVersion() + ')';
-                    const versionName = DeviceInfo.getVersion();
-                    const versionCode = DeviceInfo.getBuildNumber();
-                    const bundleId = DeviceInfo.getBundleId();
-                    const deviceType = await DeviceInfo.isEmulator() ? 'Virtual' : 'Physical';
-                    const manufacturer = await DeviceInfo.getManufacturer();
-                    const description = await DeviceInfo.getUserAgent();
-                    const computerName = await DeviceInfo.getHost();
-                    const wlanMac = await DeviceInfo.getSerialNumber();
-                    const device = new CreateDeviceModel(
-                        idiom,
-                        name,
-                        model,
-                        versionString,
-                        versionName,
-                        versionCode,
-                        bundleId,
-                        Platform.OS,
-                        deviceType,
-                        manufacturer,
-                        description,
-                        REAL_SCREEN_WIDTH,
-                        REAL_SCREEN_HEIGHT,
-                        computerName,
-                        '',
-                        '',
-                        '',
-                        wlanMac,
-                        uniqueId);
-                    Object.getOwnPropertyNames(device).forEach((value) => {
-                        // @ts-ignore
-                        req.headers[`${value}`] = `${device[value]}`;
-                    });
-                } else {
-                    console.error('No refreshToken found');
-                    cancelTokenSource.cancel('Request canceled due to lack of refresh token');
-                }
+                const idiom = DeviceInfo.isTablet() ? 'Tablet' : 'Phone';
+                const name = await DeviceInfo.getDeviceName();
+                const model = DeviceInfo.getModel();
+                const versionString = DeviceInfo.getSystemName() + '(' + DeviceInfo.getSystemVersion() + ')';
+                const versionName = DeviceInfo.getVersion();
+                const versionCode = DeviceInfo.getBuildNumber();
+                const bundleId = DeviceInfo.getBundleId();
+                const deviceType = await DeviceInfo.isEmulator() ? 'Virtual' : 'Physical';
+                const manufacturer = await DeviceInfo.getManufacturer();
+                const description = await DeviceInfo.getUserAgent();
+                const computerName = await DeviceInfo.getHost();
+                const wlanMac = await DeviceInfo.getSerialNumber();
+                const device = new CreateDeviceModel(
+                    idiom,
+                    name,
+                    model,
+                    versionString,
+                    versionName,
+                    versionCode,
+                    bundleId,
+                    Platform.OS,
+                    deviceType,
+                    manufacturer,
+                    description,
+                    REAL_SCREEN_WIDTH,
+                    REAL_SCREEN_HEIGHT,
+                    computerName,
+                    '',
+                    '',
+                    '',
+                    wlanMac,
+                    uniqueId);
+                Object.getOwnPropertyNames(device).forEach((value) => {
+                    // @ts-ignore
+                    req.headers[`${value}`] = `${device[value]}`;
+                });
             }
         }
         return req;
@@ -153,15 +135,9 @@ const createApiInstance = (baseURL: string) => {
 const loginApi = createApiInstance(SERVER_URL + LOGIN_API);
 const logoutApi = createApiInstance(SERVER_URL + LOGOUT_API);
 const licenseApi = createApiInstance(SERVER_URL + LICENSE_API);
-const createLicenceApi = (license: ICreateLicenseModel) => {
-    return licenseApi.post('', {...license});
-};
 const getLastPaymentApi =  createApiInstance(SERVER_URL + GET_LAST_PAYMENT_API);
-const lastPaymentApi = (companyId: number) => {
-    return  getLastPaymentApi.get(`?companyId=${companyId}`);
-};
 const paymentListApi = createApiInstance(SERVER_URL + GET_PAYMENT_LIST_API);
 const deviceApi = createApiInstance(SERVER_URL + DEVICE_API);
 const allCompaniesApi = createApiInstance(SERVER_URL + GET_ALL_COMPANYS_API);
 
-export {loginApi, logoutApi, createLicenceApi, lastPaymentApi, getLastPaymentApi, paymentListApi, deviceApi, allCompaniesApi};
+export {loginApi, logoutApi, licenseApi, getLastPaymentApi, paymentListApi, deviceApi, allCompaniesApi};

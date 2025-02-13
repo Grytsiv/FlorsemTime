@@ -15,3 +15,4 @@ export const rootReducer = combineReducers({
 });
 
 export const isInternetReachable = (state: TRootState) => state.appServiceReducer.netInfoState.isInternetReachable;
+export const isRegistered  = (state: TRootState) => state.appServiceReducer.isRegistered;

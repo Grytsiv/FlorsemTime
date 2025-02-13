@@ -10,7 +10,7 @@ import {
     logoutUser,
 } from '../actions/appServiceActions.ts';
 import {authorizationSuccess, userAlreadyAuthorized} from '../actions/authenticationActions.ts';
-import {INetInfo, netInfoDefault} from '../models/netInfoModel.ts';
+import {INetInfo, NetInfoClass} from '../models/netInfoModel.ts';
 
 interface IAppServiceState {
     isBusy: boolean;
@@ -24,7 +24,7 @@ const initialState: IAppServiceState = {
     isBusy: false,
     isRegistered: undefined,
     appState: 'none',
-    netInfoState: netInfoDefault,
+    netInfoState: new NetInfoClass(),
     error: {},
     isShownErrorAlert: false,
 };

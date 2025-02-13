@@ -5,10 +5,12 @@ import {logoutUser} from '../actions/appServiceActions.ts';
 interface IAuthenticationState {
     accessToken: string;
     refreshToken: string;
+    login: string;
 }
 const initialState: IAuthenticationState = {
     accessToken: '',
     refreshToken: '',
+    login: '',
 };
 const authenticationReducer = createReducer(initialState, (builder) => {
     builder
@@ -19,6 +21,7 @@ const authenticationReducer = createReducer(initialState, (builder) => {
         .addCase(userAlreadyAuthorized,(state, action) => {
             state.accessToken = action.payload.accessToken;
             state.refreshToken = action.payload.refreshToken!;
+            state.login = action.payload.login;
         })
         .addCase(refreshTokenSuccess,(state, action) => {
             state.refreshToken = action.payload.refreshToken;

@@ -11,11 +11,14 @@ import styles from './styles';
 const LoginScreen: FC = () => {
     const dispatch = useAppDispatch();
     const {t} = useTranslation();
-    const isBusy = useAppSelector(
-        (state: TRootState) => state.appServiceReducer.isBusy,
+    const {isBusy} = useAppSelector(
+        (state: TRootState) => state.appServiceReducer,
+    );
+    const {login} = useAppSelector(
+        (state: TRootState) => state.authenticationReducer,
     );
 
-    const [credentialsInput, setCredentials] = React.useState(new Credentials());
+    const [credentialsInput, setCredentials] = React.useState(new Credentials(login, ''));
     const [flatTextSecureEntry, setFlatTextSecureEntry] = React.useState(true);
 
     const onChangeEmail = React.useCallback(

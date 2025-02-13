@@ -1,49 +1,89 @@
-import React, {useEffect, useRef} from 'react';
-import type {PropsWithChildren} from 'react';
-import {View, AppState, Appearance} from 'react-native';
-import {ActivityIndicator, Portal} from 'react-native-paper';
+import React, {useCallback, useEffect, useMemo, useRef} from 'react';
+import {View, AppState, Appearance, AppStateStatus} from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
+import * as Keychain from 'react-native-keychain';
+import BusyIndicator from '../BusyIndicator';
 import ActionCreators from '../../actions';
 import {TRootState} from '../../boot/configureStore';
+import {KEYCHAIN_STORAGE} from '../../config.ts';
 import {useAppDispatch, useAppSelector} from '../../boot/hooks';
-import styles from './styles';
 import {INetInfo, NetInfoClass} from '../../models/netInfoModel.ts';
+import styles from './styles';
+
+interface IAppServiceWrapper {
+    children: React.ReactNode;
+}
 /*
 Non-UI Component!!!
  */
-const AppServiceWrapper = ({
-                               children,
-                           }: PropsWithChildren): React.ReactElement => {
-    const dispatch = useAppDispatch();
+const AppServiceWrapper: React.FC<IAppServiceWrapper> = ({children}) => {
 
+    const dispatch = useAppDispatch();
     const appState = useRef(AppState.currentState);
 
-    const {netInfoState, isBusy} = useAppSelector(
+    useEffect(() => {
+        dispatch(ActionCreators.appStateChanged(appState.current));
+    }, [dispatch]);
+
+    const {netInfoState, isBusy, isRegistered} = useAppSelector(
         (state: TRootState) => state.appServiceReducer,
     );
+
+    useEffect(() => {
+        if (isRegistered === undefined) {
+            const checkKeychain = async () => {
+                try {
+                    // Retrieve the credentials
+                    const credentials = await Keychain.getGenericPassword({storage: KEYCHAIN_STORAGE});
+                    if (credentials) {
+                        const parsedValues = JSON.parse(
+                            credentials.password,
+                        );
+                        dispatch(
+                            ActionCreators.userAlreadyAuthorized({
+                                accessToken: parsedValues.accessToken,
+                                login: credentials.username,
+                                refreshToken: parsedValues.refreshToken,
+                            }),
+                        );
+                    } else {
+                        console.log('No credentials stored');
+                        //setUserRegistered(false);
+                        dispatch(ActionCreators.authStateChanged(false));
+                    }
+                } catch (error) {
+                    console.log("Keychain couldn't be accessed!", error);
+                    dispatch(ActionCreators.authStateChanged(false));
+                }
+            };
+            checkKeychain().then(() =>
+                console.log('The work with the Keychain is complete'),
+            );
+        }
+    }, [isRegistered, dispatch]);
+
     const {isDark} = useAppSelector(
         (state: TRootState) => state.themeReducer,
     );
 
-    const colorScheme = Appearance.getColorScheme();
-    const isDarkScheme = colorScheme === 'dark';
+    const isDarkScheme = useMemo(() => Appearance.getColorScheme() === 'dark', []);
+
+    const handleAppStateChange = useCallback((nextAppState: AppStateStatus) => {
+        appState.current = nextAppState;
+        dispatch(ActionCreators.appStateChanged(appState.current));
+        console.log('AppState', appState.current);
+    }, [dispatch]);
 
     useEffect(() => {
-        const subscription = AppState.addEventListener('change', nextAppState => {
-            appState.current = nextAppState;
-            dispatch(ActionCreators.appStateChanged(appState.current));
-            console.log('AppState', appState.current);
-        });
-        return () => {
-            subscription.remove();
-        };
-    }, [dispatch]);
+        const subscription = AppState.addEventListener('change', handleAppStateChange);
+        return () => subscription.remove();
+    }, [handleAppStateChange]);
 
     useEffect(() => {
         let netInfo: INetInfo = netInfoState;
         const unsubscribe = NetInfo.addEventListener(state => {
             const newNetInfoState = new NetInfoClass(state.details, state.isConnected!, state.isInternetReachable, state.type);
-            if (JSON.stringify(newNetInfoState) !== JSON.stringify(netInfo)) {
+            if (!netInfo?.isEqual(newNetInfoState)) {
                 netInfo = newNetInfoState;
                 // Dispatch your actions here based on the netInfo state
                 dispatch(ActionCreators.connectionHasBeenChanged(newNetInfoState));
@@ -57,22 +97,12 @@ const AppServiceWrapper = ({
         if (isDark !== isDarkScheme) {
             dispatch(ActionCreators.setIsDarkTheme(isDarkScheme));
         }
-    });
+    }, [isDark, isDarkScheme, dispatch]);
 
     return (
         <View style={styles.container}>
             {children}
-            {isBusy && (
-                <View>
-                    <Portal>
-                        <ActivityIndicator
-                            size={'large'}
-                            animating={true}
-                            style={styles.modalContainerStyle}
-                        />
-                    </Portal>
-                </View>
-            )}
+            {isBusy && <BusyIndicator />}
         </View>
     );
 };
