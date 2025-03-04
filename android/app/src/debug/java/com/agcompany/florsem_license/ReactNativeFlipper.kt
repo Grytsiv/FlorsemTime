@@ -9,6 +9,7 @@ import com.facebook.flipper.plugins.inspector.DescriptorMapping
 import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor
 import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
+import com.facebook.flipper.plugins.navigation.NavigationFlipperPlugin
 import com.facebook.flipper.plugins.react.ReactFlipperPlugin
 import com.facebook.flipper.plugins.sharedpreferences.SharedPreferencesFlipperPlugin
 import com.facebook.react.ReactInstanceManager
@@ -26,6 +27,7 @@ class ReactNativeFlipper {
                 client.addPlugin(DatabasesFlipperPlugin(context))
                 client.addPlugin(SharedPreferencesFlipperPlugin(context))
                 client.addPlugin(CrashReporterPlugin.getInstance())
+                client.addPlugin(NavigationFlipperPlugin.getInstance())
 
                 val networkFlipperPlugin = NetworkFlipperPlugin()
                 NetworkingModule.setCustomClientBuilder(

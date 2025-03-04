@@ -4,6 +4,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import LoginScreen from '../screens/LoginScreen';
 import HomeScreen from '../screens/HomeScreen';
+import FlorsemScreen from '../screens/FlorsemScreen';
 import CompanyDetailsScreen from '../screens/CompanyDetailsScreen';
 import {navigationRef} from './NavigationService';
 import {NavigationContainer, Theme} from '@react-navigation/native';
@@ -43,6 +44,7 @@ const LoggedInDrawer = createDrawerNavigator();
 
 const LoggedInNavigator = () => {
     const {t} = useTranslation();
+    const {user:{RoleId}} = useAppSelector((state: TRootState) => state.profileReducer);
     return (
         <LoggedInDrawer.Navigator
             screenOptions={{
@@ -51,6 +53,7 @@ const LoggedInNavigator = () => {
             }}
             drawerContent={props => <DrawerMenu {...props} />}>
             <LoggedInDrawer.Screen name={t('homeScreen.title')} component={HomeScreen} />
+            {RoleId === 1 && <LoggedInDrawer.Screen name="Florsem" component={FlorsemScreen} />}
         </LoggedInDrawer.Navigator>
     );
 };

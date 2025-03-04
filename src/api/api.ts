@@ -3,6 +3,7 @@ import axios, {AxiosResponse} from 'axios';
 import DeviceInfo from 'react-native-device-info';
 import {
     SERVER_URL,
+    PRODUCTION_SERVER_URL,
     LOGIN_API,
     LOGOUT_API,
     LICENSE_API,
@@ -135,9 +136,10 @@ const createApiInstance = (baseURL: string) => {
 const loginApi = createApiInstance(SERVER_URL + LOGIN_API);
 const logoutApi = createApiInstance(SERVER_URL + LOGOUT_API);
 const licenseApi = createApiInstance(SERVER_URL + LICENSE_API);
+const licenseOldApi = createApiInstance(PRODUCTION_SERVER_URL + LICENSE_API);
 const getLastPaymentApi =  createApiInstance(SERVER_URL + GET_LAST_PAYMENT_API);
 const paymentListApi = createApiInstance(SERVER_URL + GET_PAYMENT_LIST_API);
 const deviceApi = createApiInstance(SERVER_URL + DEVICE_API);
 const allCompaniesApi = createApiInstance(SERVER_URL + GET_ALL_COMPANYS_API);
 
-export {loginApi, logoutApi, licenseApi, getLastPaymentApi, paymentListApi, deviceApi, allCompaniesApi};
+export {loginApi, logoutApi, licenseApi, licenseOldApi, getLastPaymentApi, paymentListApi, deviceApi, allCompaniesApi};

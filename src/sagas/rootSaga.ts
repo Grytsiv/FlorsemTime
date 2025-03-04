@@ -1,5 +1,6 @@
 import {all, call, fork} from 'redux-saga/effects';
 // sagas
+import florsemSaga from './florsemSaga';
 import homeSaga from './homeSaga';
 import authenticationSaga from './authenticationSaga';
 
@@ -12,5 +13,6 @@ export default function* rootSaga() {
         fork(logReduxSagaInitialized),
         fork(authenticationSaga),
         fork(homeSaga),
+        fork(florsemSaga),
     ]);
 }
