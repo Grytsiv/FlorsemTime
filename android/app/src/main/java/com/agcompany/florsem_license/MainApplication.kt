@@ -63,7 +63,8 @@ class MainApplication : Application(), ReactApplication {
          We use reflection here to pick up the class that initializes Flipper,
         since Flipper library is not available in release mode
         */
-        val aClass = Class.forName("com.agcompany.florsem_license.ReactNativeFlipper").kotlin
+        val packageName = context.packageName
+        val aClass = Class.forName("$packageName.ReactNativeFlipper").kotlin
         aClass.companionObject?.members?.firstOrNull{ it.name == "initializeFlipper" }
           ?.call(aClass.companionObjectInstance, context, reactInstanceManager)
       } catch (e: ClassNotFoundException) {
