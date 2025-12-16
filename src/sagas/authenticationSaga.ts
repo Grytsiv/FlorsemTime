@@ -5,15 +5,22 @@ import * as Keychain from 'react-native-keychain';
 import * as Sentry from '@sentry/react-native';
 import {getTokenFromKeychain} from '../utils/keychainStorage.ts';
 import {HttpStatusCode} from 'axios';
-import {deviceApi, loginApi, logoutApi} from '../api/api.ts';
+import {loginApi, logoutApi} from '../api/api.ts';
 import {KEYCHAIN_TOKEN_KEY} from '../models/keychainStorage.ts';
 import {ILoginResponse} from '../models/ILoginResponse.ts';
 import {ICredentials} from '../models/ICredentials.ts';
-import {IAuthorizeResult, IRefreshAction} from '../models/IRefreshResult.ts';
-import {IDeviceResponse} from '../models/IDeviceResponse.ts';
+import {
+  IAuthorizeResult,
+  IRefreshAction,
+  RefreshAction,
+} from '../models/IRefreshResult.ts';
 import {Errors} from '../models/IErrorModel.ts';
 import {isInternetReachable, isRegistered} from '../reducers';
-import {KEYCHAIN_STORAGE} from '../config.ts';
+import {
+  CONNECTION_RETRY_DELAY_MS,
+  KEYCHAIN_STORAGE,
+  MAX_CONNECTION_RETRIES,
+} from '../config.ts';
 import {TRootState} from '../boot/configureStore.ts';
 import {getUserSuccess} from '../actions/profileActions.ts';
 import {
@@ -27,9 +34,6 @@ import {
     handleAuthorize,
     authorizationSuccess,
     authorizationFailure,
-    handleDevice,
-    deviceSuccess,
-    deviceFailure,
     handleRefresh,
     refreshTokenSuccess,
     refreshTokenFailure,
@@ -37,14 +41,43 @@ import {
     revokeTokenSuccess,
     revokeTokenFailure,
 } from '../actions/authenticationActions.ts';
-import {handleLastPayment, handlePaymentList} from '../actions/homeActions.ts';
 
 function* saveCredentials(login: string, stringify: IAuthorizeResult) {
     yield call([Keychain, Keychain.setGenericPassword], login, JSON.stringify(stringify), {storage: KEYCHAIN_STORAGE});
 }
 
+/**
+ * Waits for the internet connection to be available.
+ * It first waits for the connection status to be determined, then retries
+ * for a short period if initially disconnected.
+ * @returns A generator that yields a boolean indicating if the connection is available.
+ */
+export function* waitForInternetConnection(): Generator<any, boolean, boolean | null> {
+  // Wait for a stable Internet connection state (not null)
+  let isInternet: boolean | null = yield select(isInternetReachable);
+  while (isInternet === null) {
+    yield delay(CONNECTION_RETRY_DELAY_MS);
+    isInternet = yield select(isInternetReachable);
+  }
+
+  // If not connected, retry for a short duration
+  let retries = 0;
+  while (!isInternet && retries < MAX_CONNECTION_RETRIES) {
+    yield delay(CONNECTION_RETRY_DELAY_MS);
+    retries++;
+    isInternet = yield select(isInternetReachable);
+  }
+
+  if (!isInternet) {
+    yield put(noneInternetConnection());
+    return false;
+  }
+
+  return true;
+}
+
 function* register({payload}: PayloadAction<ICredentials>) {
-    const isInternet: boolean | null = yield select(isInternetReachable);
+    const isInternet: boolean = yield call(waitForInternetConnection);
     if (!isInternet) {
         yield put(noneInternetConnection());
         return;
@@ -66,12 +99,11 @@ function* register({payload}: PayloadAction<ICredentials>) {
             const response = login.data as ILoginResponse;
             stringify = {
                 accessToken: token,
-                refreshToken: response.Token,
+                refreshToken: response.token,
             };
             yield saveCredentials(username, stringify);
             yield put(authorizationSuccess(stringify));
             yield put(getUserSuccess(response));
-            yield put(handleDevice());
         }
     } catch (error: any) {
         Sentry.captureException(error);
@@ -99,18 +131,16 @@ function* refreshToken({payload}: PayloadAction<IRefreshAction>) {
                 const response = login.data as ILoginResponse;
                 const stringify = {
                     accessToken: token!,
-                    refreshToken: response.Token,
+                    refreshToken: response.token,
                 };
-                //yield call([Keychain, Keychain.setGenericPassword], credentials.username, JSON.stringify(stringify), {storage: KEYCHAIN_STORAGE});
                 yield saveCredentials(credentials.username, stringify);
-                yield put(refreshTokenSuccess({refreshToken: response.Token}));
-                yield put(getUserSuccess(response));
+                yield put(refreshTokenSuccess({refreshToken: response.token}));
+                yield put(getUserSuccess(response as ILoginResponse));
                 //Reload the last call
                 yield put({
                     type: payload.type,
                     payload: payload.payload,
                 });
-                yield put(handleDevice());
             }
         } else {
             yield put(refreshTokenFailure(new Errors(0, [], [payload.type + '|' + payload.payload])));
@@ -124,34 +154,8 @@ function* refreshToken({payload}: PayloadAction<IRefreshAction>) {
     }
 }
 
-function* getDevice() {
-    yield put(showLoadingIndicator());
-    const state: TRootState = yield select();
-    try {
-        const device: {status: number, data: IDeviceResponse} = yield call([deviceApi, deviceApi.get], '', {headers: {Authorization: `Bearer ${state.authenticationReducer.refreshToken}`}});
-        if (device.status === HttpStatusCode.Ok) {
-            const response = device.data as IDeviceResponse;
-            yield put(deviceSuccess(response));
-            //Check User permission
-            if (state.profileReducer.user.RoleId === 1) {
-                //Get Payment List
-                yield put(handlePaymentList());
-            } else if (state.profileReducer.user.RoleId > 1) {
-                //Get Last Payment
-                yield put(handleLastPayment());
-            }
-        }
-    } catch (error: any) {
-        Sentry.captureException(error);
-        console.log(error);
-        yield put(deviceFailure(error));
-    } finally {
-        yield put(hideLoadingIndicator());
-    }
-}
-
-function* revokeToken() {
-    const isInternet: boolean | null = yield select(isInternetReachable);
+function* revokeToken({payload, type}: PayloadAction<any>) {
+    const isInternet: boolean = yield call(waitForInternetConnection);
     if (!isInternet) {
         yield put(noneInternetConnection());
         return;
@@ -164,6 +168,10 @@ function* revokeToken() {
         yield put(logoutUser());
         yield put(revokeTokenSuccess());
     } catch (error: any) {
+        if (error.status === HttpStatusCode.Unauthorized) {
+          yield put(handleRefresh(new RefreshAction(type, payload)));
+          return;
+        }
         console.log(error);
         yield put(revokeTokenFailure(error));
     } finally {
@@ -178,7 +186,6 @@ function* logout() {
 export default function* authorizeFlow() {
     yield takeLeading(handleAuthorize, register);
     yield takeLeading(handleRefresh, refreshToken);
-    yield takeLeading(handleDevice, getDevice);
     yield takeLeading(handleRevoke, revokeToken);
     yield takeLeading(logoutUser, logout);
 }

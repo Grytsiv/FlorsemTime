@@ -1,84 +1,87 @@
 import React from 'react';
 import {View} from 'react-native';
 import {Card, Text} from 'react-native-paper';
-import styles from './styles';
-import {IMergedCompanyModel} from '../../models/ICompanyModel.ts';
+import {useTranslation} from 'react-i18next';
 import moment from 'moment/moment';
+import {ICompanyResponse} from '../../models/ICreateLicenseModel.ts';
 import colors from '../../theme/colors.ts';
+import styles from './styles';
 
 interface ICompanyCard {
-    item: IMergedCompanyModel;
+    item: ICompanyResponse;
     onPress: () => void;
 }
 
 const CompanyCard: React.FC<ICompanyCard> = ({item, onPress}) => {
-    const {company, payment} = item;
+    const {title, data} = item;
+    const {t} = useTranslation();
     const now = new Date().valueOf();
-    const companyValidToDate = new Date(moment(payment.StartDate).add(payment.Period + 1, 'days').toDate()).valueOf();
-    const isDateValid = companyValidToDate > now;
+    const companyValidToDate =
+      data.type === 0 ?
+        new Date(moment().endOf('month').toDate()).valueOf() :
+        new Date(moment(now).add(data.daysRemained + 1, 'days').toDate()).valueOf();
+    const isDateValid =
+      data.type === 0 ?
+        data.agBalance >= 0 && data.smsBalance >= 0 :
+        data.daysRemained >= 0;
     const validDays = Math.floor(moment.duration(companyValidToDate - now).asDays());
     return (
-        <Card style={[styles.card, {borderColor: isDateValid ? colors.royalBlue : colors.guardsmanRed}]} onPress={onPress}>
-            <Card.Content>
-                <View style={styles.rowHeader}>
-                    <Text style={styles.textFlex2}>
-                        {company.Name}, ID:{company.Id}
-                    </Text>
-                    <View style={styles.rowWithIcon}>
-                        <Text
-                            numberOfLines={1}
-                            style={styles.textBold}>
-                            {payment.StartDate}
-                        </Text>
-                    </View>
+      <Card
+        style={[
+          styles.card,
+          {borderColor: isDateValid ? colors.royalBlue : colors.guardsmanRed},
+        ]}
+        onPress={onPress}>
+        <Card.Content>
+          <View style={styles.rowHeader}>
+            <Text style={styles.textFlex2}>{title}</Text>
+            <View style={styles.rowWithIcon}>
+              <Text numberOfLines={1} style={styles.textBold}>
+                {moment.utc(companyValidToDate).format('YYYY-MM-DD')}
+              </Text>
+            </View>
+          </View>
+          <View style={[styles.rowHeader, styles.marginTop]}>
+            <Text style={styles.textFlex2}>
+              {companyValidToDate > now
+                ? t('homeScreen.validUntil')
+                : t('homeScreen.expired')}
+            </Text>
+            <View style={styles.rowWithText}>
+              <Text
+                numberOfLines={1}
+                style={[
+                  styles.textBold,
+                  {color: isDateValid ? colors.royalBlue : colors.guardsmanRed},
+                ]}>
+                {validDays}
+              </Text>
+            </View>
+          </View>
+          {data.type === 0 && (
+            <>
+              <View style={[styles.rowHeader, styles.marginTop]}>
+                <Text style={styles.textFlex2}>{t('homeScreen.balance')}</Text>
+                <View style={styles.rowWithText}>
+                  <Text numberOfLines={1} style={styles.textBold}>
+                    {data.agBalance}
+                  </Text>
                 </View>
-                <View style={[styles.rowHeader, styles.marginTop]}>
-                    <Text style={styles.textFlex2}>
-                        {company.Address}
-                    </Text>
-                    <View style={styles.rowWithText}>
-                        <Text numberOfLines={1} style={styles.textBold}>
-                            {payment.Period}
-                        </Text>
-                    </View>
-                </View>
-                <View style={styles.rowHeader}>
-                    <Text style={styles.textFlex2}>
-                        {company.Phone}
-                    </Text>
-                    <View style={styles.rowWithText}>
-                        <Text
-                            style={[
-                                styles.textValue,
-                                styles.marginHorizontal,
-                            ]}>
-                            {payment.CardOwnerName}
-                        </Text>
-                    </View>
-                </View>
-                <View style={[styles.rowHeader, styles.marginTop]}>
-                    <Text style={styles.textFlex2}>
-                        {company.Email}
-                    </Text>
-                    <View style={styles.rowWithText}>
-                        <Text numberOfLines={1} style={[styles.textBold, {color: isDateValid ? colors.royalBlue : colors.guardsmanRed}]}>
-                            {validDays}
-                        </Text>
-                    </View>
-                </View>
-                <Text style={[
-                        styles.textRef,
-                    ]}>
-                    {company.CreatedDate}
+              </View>
+              <View style={[styles.rowHeader, styles.marginTop]}>
+                <Text style={styles.textFlex2}>
+                  {t('homeScreen.smsBalance')}
                 </Text>
-                <Text
-                    style={[
-                        styles.textValue,
-                    ]}>
-                    {company.ModifiedDate}
-                </Text>
-            </Card.Content>
-        </Card>
+                <View style={styles.rowWithText}>
+                  <Text numberOfLines={1} style={styles.textBold}>
+                    {data.smsBalance}
+                  </Text>
+                </View>
+              </View>
+            </>
+          )}
+        </Card.Content>
+      </Card>
     );
 };
 

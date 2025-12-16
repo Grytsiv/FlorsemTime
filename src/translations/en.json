@@ -6,31 +6,34 @@
     "passwordLabel" : "Password"
   },
   "drawerMenu" : {
-    "role" : "Role: ",
     "name" : "Name: ",
-    "surname" : "Surname: ",
     "phone" : "Phone: ",
-    "email" : "Email: ",
-    "address" : "Address: ",
+    "city" : "City: ",
     "version" : "Version: "
   },
   "homeScreen" : {
-    "title" : "Home",
-    "label" : "Home screen will be here soon",
-    "licenseValid" : "License valid: {{validDays}} days, To: {{validTo}}",
-    "cardNumber" : "Card Number: {{cardNumber}}",
-    "cardOwner" : "Card Owner: {{cardOwner}}",
-    "companyId" : "Company ID: {{companyId}}",
-    "forbidden" : "The user {{name}} {{surname}} does not have access to this data",
-    "lastPaymentId" : "Last Payment ID: {{lastPaymentId}}",
-    "arrivalDate" : "License date",
-    "logoutButton" : "Logout",
-    "sentryButton" : "Test Sentry",
-    "renewLicenseText" : "Renew license for next {{days}} days",
-    "refreshTokenButton" : "Refresh Token"
+    "title": "Home",
+    "label": "Home screen will be here soon",
+    "licenseValid": "License valid: {{validDays}} days, To: {{validTo}}",
+    "cardNumber": "Card Number: {{cardNumber}}",
+    "cardOwner": "Card Owner: {{cardOwner}}",
+    "balance": "Balance, $:",
+    "smsBalance": "SMS Balance, ₴:",
+    "validUntil": "Valid until (days):",
+    "expired": "Expired (days):",
+    "companyId": "Company ID: {{companyId}}",
+    "forbidden": "The user {{name}} {{surname}} does not have access to this data",
+    "lastPaymentId": "Last Payment ID: {{lastPaymentId}}",
+    "arrivalDate": "License date",
+    "logoutButton": "Logout",
+    "sentryButton": "Test Sentry",
+    "renewLicenseText": "Renew license and pay $50",
+    "refreshTokenButton": "Refresh Token"
   },
   "companyDetailsScreen" : {
-    "title" : "Company Details"
+    "title" : "Company Details",
+    "balance" : "Balance, $: {{balance}}",
+    "smsBalance" : "SMS Balance, ₴: {{smsBalance}}"
   },
   "error" : {
     "error" : "Error",

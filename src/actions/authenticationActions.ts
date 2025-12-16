@@ -3,9 +3,6 @@ import {
     AUTHORIZE_REQUEST,
     AUTHORIZE_SUCCESS,
     AUTHORIZE_FAILURE,
-    GET_DEVICE_REQUEST,
-    GET_DEVICE_SUCCESS,
-    GET_DEVICE_FAILURE,
     USER_ALREADY_AUTHORIZED,
     REFRESH_TOKEN_REQUEST,
     REFRESH_TOKEN_SUCCESS,
@@ -17,14 +14,10 @@ import {
 import {IAuthorizeResult, IRefreshAction, IRefreshResult} from '../models/IRefreshResult.ts';
 import {ICredentials} from '../models/ICredentials.ts';
 import {IErrors} from '../models/IErrorModel.ts';
-import {IDeviceResponse} from '../models/IDeviceResponse.ts';
 
 export const handleAuthorize = createAction<ICredentials>(AUTHORIZE_REQUEST);
 export const authorizationSuccess = createAction<IAuthorizeResult>(AUTHORIZE_SUCCESS);
 export const authorizationFailure = createAction<IErrors>(AUTHORIZE_FAILURE);
-export const handleDevice = createAction(GET_DEVICE_REQUEST);
-export const deviceSuccess = createAction<IDeviceResponse>(GET_DEVICE_SUCCESS);
-export const deviceFailure = createAction<IErrors>(GET_DEVICE_FAILURE);
 export const userAlreadyAuthorized = createAction<IRefreshResult>(USER_ALREADY_AUTHORIZED);
 export const handleRefresh = createAction<IRefreshAction>(REFRESH_TOKEN_REQUEST);
 export const refreshTokenSuccess = createAction<{refreshToken: string}>(REFRESH_TOKEN_SUCCESS);

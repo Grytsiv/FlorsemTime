@@ -6,31 +6,34 @@
     "passwordLabel" : "Пароль"
   },
   "drawerMenu" : {
-    "role" : "Роль: ",
     "name" : "Ім'я: ",
-    "surname" : "Прізвище: ",
     "phone" : "Телефон: ",
-    "email" : "Почта: ",
-    "address" : "Адреса: ",
+    "city" : "Місто: ",
     "version" : "Версія: "
   },
   "homeScreen" : {
     "title": "Початковий",
-    "label" : "Початковий екран скоро тут буде",
-    "licenseValid" : "Ліцензія дійсна: {{validDays}} днів, до: {{validTo}}",
-    "cardNumber" : "Номер Картки: {{cardNumber}}",
-    "cardOwner" : "Власник Картки: {{cardOwner}}",
-    "companyId" : "ID підприємства: {{companyId}}",
-    "forbidden" : "Користувач {{name}} {{surname}} немає права доступу до цих даних",
-    "lastPaymentId" : "ID крайньої оплати: {{lastPaymentId}}",
-    "arrivalDate" : "License date",
-    "logoutButton" : "Вийти",
-    "sentryButton" : "Тестувати Sentry",
-    "renewLicenseText" : "Продовжити ліцензію на наступних {{days}} днів",
-    "refreshTokenButton" : "Оновити Токен"
+    "label": "Початковий екран скоро тут буде",
+    "licenseValid": "Ліцензія дійсна: {{validDays}} днів, до: {{validTo}}",
+    "cardNumber": "Номер Картки: {{cardNumber}}",
+    "cardOwner": "Власник Картки: {{cardOwner}}",
+    "balance": "Баланс, $:",
+    "smsBalance": "SMS Баланс, ₴:",
+    "validUntil": "Дійсний до (днів):",
+    "expired": "Термін дії закінчився (днів):",
+    "companyId": "ID підприємства: {{companyId}}",
+    "forbidden": "Користувач {{name}} {{surname}} немає права доступу до цих даних",
+    "lastPaymentId": "ID крайньої оплати: {{lastPaymentId}}",
+    "arrivalDate": "License date",
+    "logoutButton": "Вийти",
+    "sentryButton": "Тестувати Sentry",
+    "renewLicenseText": "Продовжити ліцензію та внести 50$",
+    "refreshTokenButton": "Оновити Токен"
   },
   "companyDetailsScreen" : {
-    "title" : "Деталі Підприємства"
+    "title": "Деталі Підприємства",
+    "balance": "Баланс, $: {{balance}}",
+    "smsBalance": "SMS Баланс, ₴: {{smsBalance}}"
   },
   "error" : {
     "error" : "Помилка",

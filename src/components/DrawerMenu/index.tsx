@@ -23,7 +23,7 @@ const DrawerMenu: React.FC<DrawerContentComponentProps> = props => {
         (state: TRootState) => state.profileReducer.user,
     );
     const avatarLabel = userState
-        ? userState.Name?.substring(0, 1) + userState.Surname?.substring(0, 1)
+        ? userState.name?.substring(0, 2)
         : '';
     const appVersion = `${DeviceInfo.getVersion()} (${DeviceInfo.getBuildNumber()})`;
 
@@ -33,12 +33,9 @@ const DrawerMenu: React.FC<DrawerContentComponentProps> = props => {
             {userState ? (
                 <Avatar.Text style={styles.avatar} size={36} label={avatarLabel} />
             ) : null}
-            {userState ? <Text style={styles.email}>{t('drawerMenu.role')}{userState.RoleName}</Text> : null}
-            {userState ? <Text style={styles.email}>{t('drawerMenu.name')}{userState.Name}</Text> : null}
-            {userState ? <Text style={styles.email}>{t('drawerMenu.surname')}{userState.Surname}</Text> : null}
-            {userState ? <Text style={styles.email}>{t('drawerMenu.phone')}{userState.Phone}</Text> : null}
-            {userState ? <Text style={styles.email}>{t('drawerMenu.email')}{userState.Email}</Text> : null}
-            {userState ? <Text style={styles.email}>{t('drawerMenu.address')}{userState.Address}</Text> : null}
+            {userState ? <Text style={styles.email}>{t('drawerMenu.name')}{userState.name}</Text> : null}
+            {userState ? <Text style={styles.email}>{t('drawerMenu.phone')}{userState.phone}</Text> : null}
+            {userState ? <Text style={styles.email}>{t('drawerMenu.city')}{userState.city}</Text> : null}
             {userState ? <Divider /> : null}
             <DrawerItemList {...props} />
             <Divider />
