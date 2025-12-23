@@ -1,11 +1,10 @@
 import i18n from 'i18next';
 import {initReactI18next} from 'react-i18next';
-import RNLanguageDetector from '@os-team/i18next-react-native-language-detector';
+import RNLanguageDetector from './utils/rnLanguageDetector.ts';
+import {registerTranslation, en as english} from 'react-native-paper-dates';
 
 import en from './translations/en.json';
 import uk from './translations/uk.json';
-
-import {registerTranslation, en as english} from 'react-native-paper-dates';
 
 i18n
     .use(RNLanguageDetector)

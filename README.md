@@ -2,30 +2,30 @@ This is a new [**React Native**](https://reactnative.dev) project, bootstrapped 
 
 # Getting Started
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
 
-## Step 1: Start the Metro Server
+## Step 1: Start Metro
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+First, you will need to run **Metro**, the JavaScript build tool for React Native.
 
-To start Metro, run the following command from the _root_ of your React Native project:
+To start the Metro dev server, run the following command from the root of your React Native project:
 
-```bash
-# using npm
+```sh
+# Using npm
 npm start
 
 # OR using Yarn
 yarn start
 ```
 
-## Step 2: Start your Application
+## Step 2: Build and run your app
 
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
+With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
 
-### For Android
+### Android
 
-```bash
-# using npm
+```sh
+# Using npm
 npm run android
 
 # OR using Yarn
@@ -38,9 +38,23 @@ npm run android -- --mode="release"
 npx react-native build-android --mode=release
 ```
 
-### For iOS
+### iOS
 
-```bash
+For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+
+The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+
+```sh
+bundle install
+```
+
+Then, and every time you update your native dependencies, run:
+
+```sh
+bundle exec pod install
+```
+
+```sh
 # using npm
 npm run ios
 
@@ -54,6 +68,9 @@ PRODUCTION=1 arch -x86_64 pod install
 # FROM XCode 15.3 -> https://retyui.medium.com/speed-up-ios-builds-by-turning-off-flipper-on-ci-complete-react-native-guide-6846d8433d86
 # The issue described here: https://github.com/facebook/react-native/issues/43335#issuecomment-1991054868
 NO_FLIPPER=1 arch -x86_64 pod install
+
+NO_FLIPPER=1 bundle exec pod install
+NO_FLIPPER=1 arch -x86_64 bundle exec pod install
 
 # Generate iOS Release app using Yarn
 yarn ios --mode Release
