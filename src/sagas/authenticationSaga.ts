@@ -122,30 +122,31 @@ function* refreshToken({payload}: PayloadAction<IRefreshAction>) {
         isUserRegistered = yield select(isRegistered);
     }
     try {
-        const credentials: Keychain.UserCredentials | false = yield call([Keychain, Keychain.getGenericPassword], {storage: KEYCHAIN_STORAGE});
-        if (credentials) {
-            const token: string | null = yield call(getTokenFromKeychain, KEYCHAIN_TOKEN_KEY.accessToken);
+      // @ts-ignore
+      const credentials: Keychain.UserCredentials | false = yield call([Keychain, Keychain.getGenericPassword], {storage: KEYCHAIN_STORAGE});
+      if (credentials) {
+          const token: string | null = yield call(getTokenFromKeychain, KEYCHAIN_TOKEN_KEY.accessToken);
 
-            const login: {status: number, data: ILoginResponse} = yield call([loginApi, loginApi.get], '', {headers: {Authorization: `Basic ${token}`}});
-            if (login.status === HttpStatusCode.Ok) {
-                const response = login.data as ILoginResponse;
-                const stringify = {
-                    accessToken: token!,
-                    refreshToken: response.token,
-                };
-                yield saveCredentials(credentials.username, stringify);
-                yield put(refreshTokenSuccess({refreshToken: response.token}));
-                yield put(getUserSuccess(response as ILoginResponse));
-                //Reload the last call
-                yield put({
-                    type: payload.type,
-                    payload: payload.payload,
-                });
-            }
-        } else {
-            yield put(refreshTokenFailure(new Errors(0, [], [payload.type + '|' + payload.payload])));
-            yield put(logoutUser());
-        }
+          const login: {status: number, data: ILoginResponse} = yield call([loginApi, loginApi.get], '', {headers: {Authorization: `Basic ${token}`}});
+          if (login.status === HttpStatusCode.Ok) {
+              const response = login.data as ILoginResponse;
+              const stringify = {
+                  accessToken: token!,
+                  refreshToken: response.token,
+              };
+              yield saveCredentials(credentials.username, stringify);
+              yield put(refreshTokenSuccess({refreshToken: response.token}));
+              yield put(getUserSuccess(response as ILoginResponse));
+              //Reload the last call
+              yield put({
+                  type: payload.type,
+                  payload: payload.payload,
+              });
+          }
+      } else {
+          yield put(refreshTokenFailure(new Errors(0, [], [payload.type + '|' + payload.payload])));
+          yield put(logoutUser());
+      }
     } catch (error: any) {
         Sentry.captureException(error);
         console.log(error);

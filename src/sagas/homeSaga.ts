@@ -82,15 +82,10 @@ function* getPaymentList({payload, type}: PayloadAction<any>) {
         yield put(noneInternetConnection());
         return;
     }
-  // // Wait for user id to be available
-  // let state: TRootState = yield select();
-  // while (state.profileReducer.user.id === (-1)) {
-  //   yield delay(CONNECTION_RETRY_DELAY_MS);
-  //   state = yield select();
-  // }
+
     // show a loader
     yield put(showLoadingIndicator());
-    //yield delay(1000);//wait 1 sec
+
     const state: TRootState = yield select();
 
     try {
@@ -98,7 +93,9 @@ function* getPaymentList({payload, type}: PayloadAction<any>) {
         if (paymentList.status === HttpStatusCode.Ok) {
             const response = paymentList.data as ICompanyResponse[];
             yield put(paymentListSuccessResponse(response));
-            //yield put(handleAllCompanies());
+            if (state.profileReducer.user.id === (-1)) {
+              yield put(handleRefresh(new RefreshAction()));
+            }
         }
     } catch (error: any) {
         if (error.status === HttpStatusCode.Unauthorized) {
