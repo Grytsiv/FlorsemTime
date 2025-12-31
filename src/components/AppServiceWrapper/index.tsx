@@ -5,7 +5,6 @@ import * as Keychain from 'react-native-keychain';
 import BusyIndicator from '../BusyIndicator';
 import ActionCreators from '../../actions';
 import {TRootState} from '../../boot/configureStore';
-import {KEYCHAIN_STORAGE} from '../../config.ts';
 import {useAppDispatch, useAppSelector} from '../../boot/hooks';
 import {INetInfo, NetInfoClass} from '../../models/netInfoModel.ts';
 import styles from './styles';
@@ -34,7 +33,7 @@ const AppServiceWrapper: React.FC<IAppServiceWrapper> = ({children}) => {
             const checkKeychain = async () => {
                 try {
                     // Retrieve the credentials
-                    const credentials = await Keychain.getGenericPassword({storage: KEYCHAIN_STORAGE});
+                    const credentials = await Keychain.getGenericPassword();
                     if (credentials) {
                         const parsedValues = JSON.parse(
                             credentials.password,

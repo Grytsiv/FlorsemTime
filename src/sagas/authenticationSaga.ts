@@ -18,7 +18,6 @@ import {Errors} from '../models/IErrorModel.ts';
 import {isInternetReachable, isRegistered} from '../reducers';
 import {
   CONNECTION_RETRY_DELAY_MS,
-  KEYCHAIN_STORAGE,
   MAX_CONNECTION_RETRIES,
 } from '../config.ts';
 import {TRootState} from '../boot/configureStore.ts';
@@ -43,7 +42,7 @@ import {
 } from '../actions/authenticationActions.ts';
 
 function* saveCredentials(login: string, stringify: IAuthorizeResult) {
-    yield call([Keychain, Keychain.setGenericPassword], login, JSON.stringify(stringify), {storage: KEYCHAIN_STORAGE});
+    yield call([Keychain, Keychain.setGenericPassword], login, JSON.stringify(stringify));
 }
 
 /**
