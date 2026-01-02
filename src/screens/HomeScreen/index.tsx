@@ -23,7 +23,6 @@ const HomeScreen: React.FC<ScreenProps> = ({navigation}) => {
   );
 
   const handleCardPress = (item: ICompanyResponse) => {
-    dispatch(ActionCreators.clearLastPayment());
     navigation.navigate('CompanyDetailsScreen', {item});
   };
 

@@ -52,12 +52,12 @@ export class LastOldLicenseModel implements ICreateOldLicenseResponse {
     }
 }
 
-export interface ICreateKhymkorLicenseModel {
+export interface ICreateKhymcorLicenseModel {
   dateTime: string;
   amount: number;
 }
 
-export class CreateKhymkorLicenseModel implements ICreateKhymkorLicenseModel {
+export class CreateKhymkorLicenseModel implements ICreateKhymcorLicenseModel {
   dateTime: string;
   amount: number;
 
@@ -67,17 +67,19 @@ export class CreateKhymkorLicenseModel implements ICreateKhymkorLicenseModel {
   }
 }
 
-export interface ICreateKhymkorLicenseResponse extends ICreateKhymkorLicenseModel {
+export interface ICreateKhymcorLicenseResponse extends ICreateKhymcorLicenseModel {
   id: number;
 }
 
 // Common properties for the data object
 interface IBaseData {
+  id: number;
   type: number;
 }
 
 // Data specific to type 0 (e.g., KhymCor)
 export interface IBalanceData extends IBaseData {
+  id: number;
   type: 0;
   agBalance: number;
   smsBalance: number;
@@ -85,6 +87,7 @@ export interface IBalanceData extends IBaseData {
 
 // Data-specific to type 1 (e.g., Home Service)
 export interface IServiceData extends IBaseData {
+  id: number;
   type: 1;
   daysRemained: number;
 }

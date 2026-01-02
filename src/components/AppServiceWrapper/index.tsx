@@ -46,8 +46,7 @@ const AppServiceWrapper: React.FC<IAppServiceWrapper> = ({children}) => {
                             }),
                         );
                     } else {
-                        console.log('No credentials stored');
-                        //setUserRegistered(false);
+                        //console.log('No credentials stored');
                         dispatch(ActionCreators.authStateChanged(false));
                     }
                 } catch (error) {
@@ -55,8 +54,9 @@ const AppServiceWrapper: React.FC<IAppServiceWrapper> = ({children}) => {
                     dispatch(ActionCreators.authStateChanged(false));
                 }
             };
-            checkKeychain().then(() =>
-                console.log('The work with the Keychain is complete'),
+            checkKeychain().then(() => {
+                //console.log('The work with the Keychain is complete');
+              }
             );
         }
     }, [isRegistered, dispatch]);

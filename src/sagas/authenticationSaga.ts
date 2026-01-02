@@ -121,8 +121,7 @@ function* refreshToken({payload}: PayloadAction<IRefreshAction>) {
         isUserRegistered = yield select(isRegistered);
     }
     try {
-      // @ts-ignore
-      const credentials: Keychain.UserCredentials | false = yield call([Keychain, Keychain.getGenericPassword], {storage: KEYCHAIN_STORAGE});
+      const credentials: Keychain.UserCredentials | false = yield call([Keychain, Keychain.getGenericPassword]);
       if (credentials) {
           const token: string | null = yield call(getTokenFromKeychain, KEYCHAIN_TOKEN_KEY.accessToken);
 

@@ -6,7 +6,6 @@ import {
     LOGIN_API,
     LOGOUT_API,
     LICENSE_API,
-    GET_LAST_PAYMENT_API,
     DEFAULT_TIME_OUT,
     REAL_SCREEN_WIDTH,
     REAL_SCREEN_HEIGHT,
@@ -125,7 +124,6 @@ const loginApi = createApiInstance(SERVER_URL + LOGIN_API);
 const logoutApi = createApiInstance(SERVER_URL + LOGOUT_API);
 const licenseApi = createApiInstance(SERVER_URL + LICENSE_API);
 const licenseOldApi = createApiInstance(SERVER_URL + LICENSE_API);
-const getLastPaymentApi =  createApiInstance(SERVER_URL + GET_LAST_PAYMENT_API);
 const paymentListApi = createApiInstance(SERVER_URL + GET_PAYMENT_LIST_API);
 
-export {loginApi, logoutApi, licenseApi, licenseOldApi, getLastPaymentApi, paymentListApi};
+export {loginApi, logoutApi, licenseApi, licenseOldApi, paymentListApi};

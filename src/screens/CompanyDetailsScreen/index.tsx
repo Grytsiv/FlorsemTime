@@ -78,7 +78,7 @@ const CompanyDetailsScreen: FC<ScreenProps> = ({route}) => {
               mode="outlined"
               onPress={() => {
                 const newLicense = new CreateKhymkorLicenseModel();
-                dispatch(ActionCreators.handleRenewKhymkorLicense(newLicense));
+                dispatch(ActionCreators.handleRenewKhymcorLicense(newLicense));
               }}>
               {t('homeScreen.renewLicenseText')}
             </Button>
