@@ -14,15 +14,22 @@ import {
 import colors from '../../theme/colors.ts';
 
 type ScreenProps = {
-  route: {params: {item: ICompanyResponse}};
+  route: {params: {id: number}};
 };
 
 const CompanyDetailsScreen: FC<ScreenProps> = ({route}) => {
 
-    const {item} = route.params;
-
+    const {id} = route.params;
     const dispatch = useAppDispatch();
     const {t} = useTranslation();
+
+    const {paymentList} = useAppSelector(
+      (state: TRootState) => state.homeReducer,
+    );
+
+    const targetItem: ICompanyResponse | undefined = paymentList.find(payment => payment.data.id === id);
+
+    const item = targetItem!!;
 
     const now = new Date().valueOf();
     const companyValidToDate =
@@ -40,9 +47,9 @@ const CompanyDetailsScreen: FC<ScreenProps> = ({route}) => {
         (state: TRootState) => state.appServiceReducer,
     );
 
-    const onRefresh = () => {
-        //dispatch(ActionCreators.handleLastPayment(item.company.Id));
-    };
+    const onRefresh = React.useCallback(() => {
+      dispatch(ActionCreators.handlePaymentList());
+    }, [dispatch]);
 
     return (
       <ScrollView

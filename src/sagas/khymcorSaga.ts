@@ -11,7 +11,12 @@ import {
 import {licenseApi} from '../api/api.ts';
 import {HttpStatusCode} from 'axios';
 import * as Sentry from '@sentry/react-native';
-import {handleRenewKhymcorLicense, renewLicenseFailureResponse, renewLicenseSuccessResponse} from '../actions/homeActions.ts';
+import {
+  handlePaymentList,
+  handleRenewKhymcorLicense,
+  renewLicenseFailureResponse,
+  renewLicenseSuccessResponse,
+} from '../actions/homeActions.ts';
 import {waitForInternetConnection} from './authenticationSaga.ts';
 import {TRootState} from '../boot/configureStore.ts';
 import {handleRefresh} from '../actions/authenticationActions.ts';
@@ -41,6 +46,7 @@ function* renewKhymcorLicense({payload, type}: PayloadAction<ICreateKhymcorLicen
     if (newLicense.status === HttpStatusCode.Ok) {
       const response = newLicense.data as ICreateKhymcorLicenseResponse;
       yield put(renewLicenseSuccessResponse(response));
+      yield put(handlePaymentList());
     }
   } catch (error: any) {
     if (error.status === HttpStatusCode.Unauthorized) {

@@ -23,7 +23,7 @@ const HomeScreen: React.FC<ScreenProps> = ({navigation}) => {
   );
 
   const handleCardPress = (item: ICompanyResponse) => {
-    navigation.navigate('CompanyDetailsScreen', {item});
+    navigation.navigate('CompanyDetailsScreen', {id: item.data.id});
   };
 
   const onRefresh = React.useCallback(() => {
