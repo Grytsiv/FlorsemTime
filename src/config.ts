@@ -15,7 +15,7 @@ export const DEV_SERVER_URL: string = 'https://176.117.164.49:50133';
 export const STAGING_SERVER_URL: string = 'https://ag.if.ua:60135';
 export const PRODUCTION_SERVER_URL: string = 'https://ag.if.ua:50236';
 
-export const SERVER_URL: string = STAGING_SERVER_URL;
+export const SERVER_URL: string = PRODUCTION_SERVER_URL;
 export const LOGIN_API: string = '/api/payment/login';
 export const LOGOUT_API: string = '/api/payment/logout';
 export const LICENSE_API: string = '/api/khymcor/createpayment';

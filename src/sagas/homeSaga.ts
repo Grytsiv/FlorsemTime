@@ -15,7 +15,7 @@ import {showLoadingIndicator, hideLoadingIndicator, noneInternetConnection} from
 import {handleRefresh} from '../actions/authenticationActions.ts';
 import {waitForInternetConnection} from './authenticationSaga.ts';
 
-function* getPaymentList({payload, type}: PayloadAction<any>) {
+export function* getPaymentList({payload, type}: PayloadAction<any>) {
   const isInternet: boolean = yield call(waitForInternetConnection);
     if (!isInternet) {
         yield put(noneInternetConnection());
