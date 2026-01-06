@@ -1731,7 +1731,7 @@ PODS:
     - React-logger (= 0.79.7)
     - React-perflogger (= 0.79.7)
     - React-utils (= 0.79.7)
-  - RNDeviceInfo (14.1.1):
+  - RNDeviceInfo (15.0.1):
     - React-Core
   - RNGestureHandler (2.29.1):
     - DoubleConversion
@@ -1781,7 +1781,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNLocalize (3.6.0):
+  - RNLocalize (3.6.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2357,10 +2357,10 @@ SPEC CHECKSUMS:
   ReactAppDependencyProvider: b203bace11326361b7f0513b3f5854cd340aa929
   ReactCodegen: 6a29ad4365aeeceecb951cfd6546a99ce617cc50
   ReactCommon: 4e460daed3ccb6af9e3de3176920362d8b888a17
-  RNDeviceInfo: bcce8752b5043a623fe3c26789679b473f705d3c
+  RNDeviceInfo: 36d7f232bfe7c9b5c494cb7793230424ed32c388
   RNGestureHandler: 6b39f4e43e4b3a0fb86de9531d090ff205a011d5
   RNKeychain: 2bf484cf3cb7daa075095ecd55b5f5b34085b981
-  RNLocalize: 29008c87d158bb1fe13bab3cf9dd8cdcc2761207
+  RNLocalize: 2e39f9566a3f5d513e191cb232fbc4765b3ab29d
   RNReanimated: aeca78e794b87ec881a55fde810a4b23825feb2e
   RNScreens: 7e56b051227a1a11c3068849d1a9a5dd457537df
   RNSentry: 4b60223daf66cf8571e1b0d883f4d3d1fc7d6e06
@@ -2369,6 +2369,6 @@ SPEC CHECKSUMS:
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: 9663a18d096f7f7e17a535cf00849db756709955
 
-PODFILE CHECKSUM: e760fe3cdee48e04792b0d6b7be346d9606b722c
+PODFILE CHECKSUM: 91491aa00f2323bcc1c1586457b59129828ce70a
 
 COCOAPODS: 1.15.2
