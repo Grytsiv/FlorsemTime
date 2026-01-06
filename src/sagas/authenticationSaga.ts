@@ -105,7 +105,7 @@ function* register({payload}: PayloadAction<ICredentials>) {
             yield put(getUserSuccess(response));
         }
     } catch (error: any) {
-        Sentry.captureException(error);
+        Sentry.captureException(error.originalError || error);
         console.log(error);
         yield put(authStateChanged(false));
         yield put(authorizationFailure(error));
@@ -146,7 +146,7 @@ function* refreshToken({payload}: PayloadAction<IRefreshAction>) {
           yield put(logoutUser());
       }
     } catch (error: any) {
-        Sentry.captureException(error);
+        Sentry.captureException(error.originalError || error);
         console.log(error);
         yield put(refreshTokenFailure(error));
         yield put(logoutUser());

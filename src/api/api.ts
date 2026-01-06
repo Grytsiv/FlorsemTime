@@ -109,6 +109,7 @@ const createApiInstance = (baseURL: string) => {
         status,
         errors,
         message,
+        originalError: error, // Original Error for Sentry
       });
     };
 

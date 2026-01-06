@@ -43,7 +43,7 @@ export function* getPaymentList({payload, type}: PayloadAction<any>) {
             return;
         }
         console.log(error);
-        Sentry.captureException(error);
+        Sentry.captureException(error.originalError || error);
         yield put(paymentListFailureResponse(error));
     } finally {
         yield put(hideLoadingIndicator());

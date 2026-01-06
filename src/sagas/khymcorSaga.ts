@@ -55,7 +55,7 @@ function* renewKhymcorLicense({payload, type}: PayloadAction<ICreateKhymcorLicen
       return;
     }
     console.log(error);
-    Sentry.captureException(error);
+    Sentry.captureException(error.originalError || error);
     yield put(renewLicenseFailureResponse(error));
   } finally {
     yield put(hideLoadingIndicator());

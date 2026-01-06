@@ -28,7 +28,7 @@ function* renewLicense({payload}: PayloadAction<ICreateLicenseModel>) {
         }
     } catch (error: any) {
         console.log(error);
-        Sentry.captureException(error);
+        Sentry.captureException(error.originalError || error);
         yield put(renewOldLicenseFailureResponse(error));
     } finally {
         yield put(hideLoadingIndicator());
