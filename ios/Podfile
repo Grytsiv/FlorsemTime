@@ -14,6 +14,19 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
+# TODO: remove it later
+# Bump fmt version to 12.1.0 to avoid build failure with Xcode 16.4+
+# Patch all react-native podspecs that pin fmt to 11.0.2 before CocoaPods resolves dependencies
+rn_path = File.join(__dir__, '..', 'node_modules', 'react-native')
+Dir.glob(File.join(rn_path, '**', '*.podspec')).each do |podspec_path|
+  content = File.read(podspec_path)
+  if content.include?('"fmt", "11.0.2"') || (podspec_path.end_with?('fmt.podspec') && content.include?('"11.0.2"'))
+    content.gsub!('"fmt", "11.0.2"', '"fmt", "12.1.0"')
+    content.gsub!(/"11\.0\.2"/, '"12.1.0"') if podspec_path.end_with?('fmt.podspec')
+    File.write(podspec_path, content)
+  end
+end
+
 target 'FlorsemTime' do
   config = use_native_modules!
 

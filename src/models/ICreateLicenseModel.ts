@@ -92,8 +92,14 @@ export interface IServiceData extends IBaseData {
   daysRemained: number;
 }
 
+export interface ICertificateData extends IBaseData {
+  id: number;
+  type: 2;
+  expirationDate: string;
+}
+
 // Discriminated union for the data field
-export type TCompanyData = IBalanceData | IServiceData;
+export type TCompanyData = IBalanceData | IServiceData | ICertificateData;
 
 // The main interface for the response item
 export interface ICompanyResponse {

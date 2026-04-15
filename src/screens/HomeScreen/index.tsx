@@ -23,6 +23,9 @@ const HomeScreen: React.FC<ScreenProps> = ({navigation}) => {
   );
 
   const handleCardPress = (item: ICompanyResponse) => {
+    if (item.data.type === 2) {
+      return;
+    }
     navigation.navigate('CompanyDetailsScreen', {id: item.data.id});
   };
 

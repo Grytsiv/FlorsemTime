@@ -32,16 +32,32 @@ const CompanyDetailsScreen: FC<ScreenProps> = ({route}) => {
     const item = targetItem!!;
 
     const now = new Date().valueOf();
-    const companyValidToDate =
-      item.data.type === 0 ?
-        new Date(moment().endOf('month').toDate()).valueOf() :
-        new Date(moment(now).add(item.data.daysRemained + 1, 'days').toDate()).valueOf();
-    const isDateValid =
-      item.data.type === 0 ?
-        item.data.agBalance >= 0 && item.data.smsBalance >= 0 :
-        item.data.daysRemained >= 0;
-    const validDays = Math.floor(moment.duration(companyValidToDate - now).asDays());
-    const validTo = moment.utc(companyValidToDate).format('YYYY-MM-DD');
+    let companyValidToDate = new Date(moment().endOf('month').toDate()).valueOf();
+    let isDateValid = false;
+    if ('daysRemained' in item.data && item.data.type === 1) {
+      companyValidToDate = new Date(
+        moment(now)
+          .add(item.data.daysRemained + 1, 'days')
+          .toDate(),
+      ).valueOf();
+      isDateValid = item.data.daysRemained >= 0;
+    } else if ('expirationDate' in item.data && item.data.type === 2) {
+      companyValidToDate = new Date(
+        moment(item.data.expirationDate).toDate(),
+      ).valueOf();
+      isDateValid = moment(item.data.expirationDate).valueOf() >= now;
+    } else if (
+      'agBalance' in item.data &&
+      'smsBalance' in item.data &&
+      item.data.type === 0
+    ) {
+      companyValidToDate = new Date(moment().endOf('month').toDate()).valueOf();
+      isDateValid = item.data.agBalance >= 0 && item.data.smsBalance >= 0;
+    }
+
+    const validDays = Math.floor(
+      moment.duration(companyValidToDate - now).asDays(),
+    );
 
     const {isBusy} = useAppSelector(
         (state: TRootState) => state.appServiceReducer,
@@ -65,18 +81,21 @@ const CompanyDetailsScreen: FC<ScreenProps> = ({route}) => {
               styles.firstTextLine,
               {color: isDateValid ? colors.royalBlue : colors.guardsmanRed},
             ]}>
-            {t('homeScreen.licenseValid', {validDays, validTo})}
+            {t('homeScreen.licenseValid', {validDays, companyValidToDate})}
           </Text>
           {item.data.type === 0 && (
             <Text style={styles.textLine}>
-              {t('companyDetailsScreen.balance', {balance: item.data.agBalance})}
+              {t('companyDetailsScreen.balance', {
+                balance: item.data.agBalance,
+              })}
             </Text>
           )}
           {item.data.type === 0 && (
-            <Text
-              style={
-                styles.textLine
-              }>{t('companyDetailsScreen.smsBalance', {smsBalance: item.data.smsBalance})}</Text>
+            <Text style={styles.textLine}>
+              {t('companyDetailsScreen.smsBalance', {
+                smsBalance: item.data.smsBalance,
+              })}
+            </Text>
           )}
           {item.data.type === 0 && (
             <Button
